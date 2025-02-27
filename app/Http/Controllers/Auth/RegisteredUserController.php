@@ -40,7 +40,19 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'username' => substr(explode(' ', trim($request->name))[0], 0, 14),
         ]);
+
+        if (in_array($request->role, ['admin', 'empleado'])) {
+            if (!Auth::user() || !Auth::user()->hasRole(['admin', 'empleado'])) {
+            return redirect()->back()->withErrors(['error' => 'You are not allowed to assign this role.']);
+            }
+        } else {
+            // Assign the 'cliente' role to the user by default
+            $request->merge(['role' => 'cliente']);
+        }
+        // Assign the specified role to the user
+        $user->assignRole($request->role);
 
         event(new Registered($user));
 

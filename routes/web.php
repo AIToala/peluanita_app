@@ -22,6 +22,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/admin', function () {
+            return Inertia::render('Admin');
+        })->name('admin');
+    });
+
+    Route::middleware('role:empleado')->group(function () {
+        Route::get('/empleado', function () {
+            return Inertia::render('Empleado');
+        })->name('empleado');
+    });
+
+    Route::middleware('role:cliente')->group(function () {
+        Route::get('/cliente', function () {
+            return Inertia::render('ClienteCitas');
+        })->name('cliente');
+    });
 });
 
 require __DIR__.'/auth.php';

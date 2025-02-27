@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+
+const userAuth = computed(() => {
+    return usePage().props.auth.user;
+});
 </script>
 
 <template>
@@ -21,7 +26,8 @@ import { Head } from '@inertiajs/vue3';
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
                 >
                     <div class="p-6 text-gray-900 dark:text-gray-100">
-                        You're logged in!
+                        Bienvenido {{ userAuth.role[0].toUpperCase() }},
+                        {{ userAuth.name }}.
                     </div>
                 </div>
             </div>
