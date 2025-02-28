@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Logo from '@/Components/Logo.vue';
+import { Button } from '@/components/ui/button';
 import { Head, Link } from '@inertiajs/vue3';
 
 defineProps<{
@@ -10,49 +12,46 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Peluanita - Citas Online" />
-    <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
-        <div
-            class="relative flex min-h-screen flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white"
-        >
-            <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                <header
-                    class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3"
-                >
-                    <nav v-if="canLogin" class="-mx-3 flex flex-1 justify-end">
+    <Head title="PeluAnita"></Head>
+    <div
+        class="flex min-h-screen flex-col bg-gray-50 text-black/50 dark:bg-gray-900 dark:text-white/50"
+    >
+        <header class="bg-[#FCDDC8]/50 shadow-md dark:bg-[#534F43]/25">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between py-2">
+                    <Logo showText />
+                    <nav v-if="canLogin" class="flex justify-center gap-2">
                         <Link
                             v-if="$page.props.auth.user"
                             :href="route('dashboard')"
                             class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                         >
-                            Dashboard
+                            Agenda
                         </Link>
 
                         <template v-else>
-                            <Link
-                                :href="route('login')"
-                                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                            <Button as-child variant="outline">
+                                <Link :href="route('login')"> Login </Link>
+                            </Button>
+                            <Button class="bg-primary hover:bg-primary/75"
+                                >Contacto</Button
                             >
-                                Log in
-                            </Link>
-
-                            <Link
-                                v-if="canRegister"
-                                :href="route('register')"
-                                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                            >
-                                Register
-                            </Link>
+                            <Button as-child>
+                                <Link
+                                    v-if="canRegister"
+                                    :href="route('register')"
+                                >
+                                    Registrate
+                                </Link>
+                            </Button>
                         </template>
                     </nav>
-                </header>
-
-                <footer
-                    class="py-16 text-center text-sm text-black dark:text-white/70"
-                >
-                    Laravel v{{ laravelVersion }} (PHP v{{ phpVersion }})
-                </footer>
+                </div>
             </div>
-        </div>
+        </header>
+        <main class="min-h-[50vh]"></main>
+        <footer class="py-16 text-center text-sm text-black dark:text-white/70">
+            <Logo logoSrc="footer" classNames="h-56 w-56 object-contain" />
+        </footer>
     </div>
 </template>

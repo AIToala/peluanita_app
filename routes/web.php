@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin', function () {
             return Inertia::render('Admin');
         })->name('admin');
+        Route::get('/admin/usuarios', [UserController::class, 'index'])->name('admin.usuarios');
     });
 
     Route::middleware('role:empleado')->group(function () {
