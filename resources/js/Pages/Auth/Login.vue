@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 defineProps<{
@@ -20,6 +20,9 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('login'), {
+        onSuccess: (response) => {
+            localStorage.setItem('api_token', response.props.auth.token);
+        },
         onFinish: () => {
             form.reset('password');
         },

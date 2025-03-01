@@ -12,6 +12,9 @@
         "noEmit": true,
         "skipLibCheck": true,
         "paths": {
+            "@axios": [
+                "./resources/js/lib/axios.ts"
+            ],
             "@/*": [
                 "./resources/js/*"
             ],

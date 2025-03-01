@@ -2,12 +2,11 @@
 import Logo from '@/Components/Logo.vue';
 import { Button } from '@/components/ui/button';
 import { Head, Link } from '@inertiajs/vue3';
+import { ChevronRight } from 'lucide-vue-next';
 
 defineProps<{
     canLogin?: boolean;
     canRegister?: boolean;
-    laravelVersion: string;
-    phpVersion: string;
 }>();
 </script>
 
@@ -30,10 +29,17 @@ defineProps<{
                         </Link>
 
                         <template v-else>
-                            <Button as-child variant="outline">
-                                <Link :href="route('login')"> Login </Link>
+                            <Button
+                                as-child
+                                class="bg-gray-50 text-gray-900 hover:bg-gray-50/50"
+                            >
+                                <Link :href="route('login')">
+                                    Login
+                                    <ChevronRight class="ml-2 h-4 w-4" />
+                                </Link>
                             </Button>
-                            <Button class="bg-primary hover:bg-primary/75"
+                            <Button
+                                class="bg-green-600 text-white hover:bg-green-600/75"
                                 >Contacto</Button
                             >
                             <Button as-child>

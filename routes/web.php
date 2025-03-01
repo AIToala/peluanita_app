@@ -1,28 +1,32 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
+use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Users\UserController;
 use Inertia\Inertia;
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
 
+Route::get('/csrf-cookie', function (Request $request) {
+    return response()->json(['message' => 'CSRF cookie set']);
+})->middleware('web');
+
+// Rutas que no requieren JWT
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
-});
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard/Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 Route::middleware('auth', 'verified', 'check.role:admin')->group(function () {
@@ -32,15 +36,6 @@ Route::middleware('auth', 'verified', 'check.role:admin')->group(function () {
     Route::get('/admin/roles', function () {
         return Inertia::render('Admin/Roles');
     })->name('admin.roles');
-    Route::get('/admin/usuarios', [UserController::class, 'index'])->name('admin.usuarios');
-});
-
-Route::middleware('auth', 'verified', 'check.role:empleado')->group(function () {
-    // Rutas para empleados
-});
-
-Route::middleware('auth', 'verified', 'check.role:cliente')->group(function () {
-    // Rutas para clientes
 });
 
 Route::middleware('auth', 'verified', 'check.role:empleado|admin')->group(function () {
@@ -49,4 +44,34 @@ Route::middleware('auth', 'verified', 'check.role:empleado|admin')->group(functi
     })->name('dashboard.empleados');
 });
 
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard/Dashboard', [
+        'token' => session('api_token'),
+    ]);
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::prefix('auth')->group(function (): void {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
 require __DIR__.'/auth.php';
+
+
+/* Route::group(['prefix' => 'usuarios', 'middleware' => ['auth:sanctum', 'ex.bad_request', 'verified', 'check.role:admin|empleado'], 'controller' => UserController::class], function (): void {
+    Route::get('', 'index')->name('usuarios.index');
+    //Route::get('/{id}', 'show')->name('usuarios.show');
+    //Route::post('/', 'store')->name('usuarios.store');
+    //Route::put('/{id}', 'update')->name('usuarios.update');
+    //Route::delete('/{id}', 'destroy')->name('usuarios.destroy');
+}); */
+
+//Inicio de sesion
+Route::get('/{any}', [ApplicationController::class, 'index'])->where('any', '^(?!aplicaciones|telescope)(.*)')->name('inicio');
+
+//Inicio de sesion
+Route::fallback(function () {
+    return redirect()->route('/', ['any' => 'login']);
+});

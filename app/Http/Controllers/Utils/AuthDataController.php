@@ -9,7 +9,7 @@ abstract class AuthDataController implements HasNconn, HasUser
 {
     protected User | Authenticatable | null $user = null;
 
-    private ?string $nconn = null;
+    private ?string $nconn = 'mysql';
 
 
     public function getNconn()

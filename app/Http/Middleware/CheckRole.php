@@ -21,14 +21,11 @@ class CheckRole
         }
 
         $user = Auth::user(); // Get the authenticated user
-        Log::info($roles);
         $rolesArray = array_map('trim', explode('|', $roles)); // Split roles into an array
-
-        if (!$user->hasAnyRole($rolesArray)) { // Using Spatie's method
+        if ($user->hasAnyRole($rolesArray) <= 0) { // Using Spatie's method
             Log::info('User does not have the required role(s)');
             return redirect()->route('dashboard')->with('error', 'No tienes autorización para este módulo');
         }
-
         return $next($request);
     }
 }

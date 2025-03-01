@@ -12,7 +12,7 @@
 
 <script setup>
 import logoFooter from '@/assets/images/logo/logo-no-background.png';
-import logoImage from '@/assets/images/logo/peluanita-logo.png';
+import logoImage from '@/assets/images/logo/logo.png';
 import { computed, defineProps } from 'vue';
 // Props for customization
 const props = defineProps({

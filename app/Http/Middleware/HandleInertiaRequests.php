@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
                     'email' => Auth::user()->email,
                     'role' => Auth::user()->getRoleNames(),
                 ] : null,
+                'token' => session('api_token'), 
             ],
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
