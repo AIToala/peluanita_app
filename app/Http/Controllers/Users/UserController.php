@@ -20,6 +20,8 @@ class UserController extends AuthDataController
                 ->when(isset($request['name']), fn ($q) => $q->where('name', 'like', '%' . $request['name'] . '%'))
                 ->when(isset($request['email']), fn ($q) => $q->where('email', 'like', '%' . $request['email'] . '%'))
                 ->when(isset($request['role']), fn ($q) => $q->where('role', 'like', '%' . $request['role'] . '%'))
+                ->when(isset($request['estado']), fn ($q) => $q->where('estado', $request['status'])
+                )
                 ->when(
                     $request->boolean('paginated', true),
                     fn ($q) => $q->paginate($request['per_page'] ?? 10),

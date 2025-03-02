@@ -83,7 +83,7 @@ const breadcrumbs = computed(() => {
                     </Breadcrumb>
                 </div>
             </header>
-            <div class="p-4">
+            <div class="w-[100vw] overflow-x-auto p-4">
                 <template v-if="!$slots.content">
                     <div
                         class="flex w-full flex-col items-center justify-center gap-4 font-serif"

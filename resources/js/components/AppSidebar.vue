@@ -30,7 +30,7 @@ const userAuth = computed(() => {
     return {
         name: user.name,
         email: user.email,
-        avatar: null,
+        avatar: '',
         role: user.role[0] ?? null,
     };
 });
@@ -49,7 +49,7 @@ const data = {
                 },
                 {
                     title: 'Manejar Empleados',
-                    url: '#',
+                    url: route('dashboard.empleados'),
                 },
             ],
         },
@@ -125,9 +125,9 @@ const data = {
     <Sidebar v-bind="props">
         <SidebarHeader class="mb-0 mt-4 flex items-center justify-center pb-0">
             <h1
-                class="font-title cursor-pointer text-4xl font-semibold text-emerald-500"
+                class="cursor-pointer font-title text-4xl font-semibold text-emerald-500"
             >
-                Peluanita
+                <a href="/dashboard">Peluanita</a>
             </h1>
         </SidebarHeader>
         <SidebarContent>
