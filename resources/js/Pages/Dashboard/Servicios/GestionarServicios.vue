@@ -2,25 +2,26 @@
 import Button from '@/components/ui/button/Button.vue';
 import DataTable from '@/components/ui/DataTable.vue';
 import { Input } from '@/components/ui/input';
-import { useEmpleadoStore } from '@/store/empleados';
+import { Label } from '@/components/ui/label';
+import { useServicioStore } from '@/store/servicios';
 import {
-    UsuarioColumns,
-    activar,
-    desactivar,
-} from '@/store/empleados/domain/UsuarioColumns';
+    activarServicio,
+    desactivarServicio,
+    ServicioColumns,
+} from '@/store/servicios/domain/ServicioColumns';
 import { Link } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 import { h, nextTick, onMounted, ref } from 'vue';
 import Dashboard from '../Dashboard.vue';
 
-const empleadoStore = useEmpleadoStore();
+const servicioStore = useServicioStore();
 
 interface SearchParams {
     id: string;
     value: string | number;
 }
 
-const empleados = ref([]);
+const servicios = ref([]);
 const totalRows = ref(0);
 const currentPage = ref(1);
 const perPage = ref(10);
@@ -40,9 +41,22 @@ const updateSearchQuery = (e: { target: { value: any; id: any } }) => {
     } else {
         searchQuery.value.push(search);
     }
+    loadServicios({
+        data: (() => {
+            const data: { [key: string]: string | number } = {};
+            searchQuery.value.forEach(({ id, value }) => {
+                data[id] = value;
+            });
+            return data;
+        })(),
+        pagination: {
+            page: 1,
+            per_page: perPage.value,
+        },
+    });
 };
 
-UsuarioColumns.forEach((column) => {
+ServicioColumns.forEach((column) => {
     if (column.id === 'actions') {
         column.cell = ({ row }) =>
             h(
@@ -55,9 +69,9 @@ UsuarioColumns.forEach((column) => {
                               {
                                   class: 'bg-green-500 hover:bg-green-500/80',
                                   onClick: () =>
-                                      activar(
+                                      activarServicio(
                                           row.getValue('id'),
-                                          empleadoStore,
+                                          servicioStore,
                                       ),
                               },
                               {
@@ -78,7 +92,7 @@ UsuarioColumns.forEach((column) => {
                                           Link,
                                           {
                                               href: route(
-                                                  'dashboard.empleados.editar',
+                                                  'dashboard.servicios.editar',
                                                   {
                                                       id: row.getValue('id'),
                                                   },
@@ -95,9 +109,9 @@ UsuarioColumns.forEach((column) => {
                               {
                                   class: '!bg-red-600 hover:!bg-red-600/80 !text-white ',
                                   onClick: () =>
-                                      desactivar(
+                                      desactivarServicio(
                                           row.getValue('id'),
-                                          empleadoStore,
+                                          servicioStore,
                                       ),
                               },
                               {
@@ -109,7 +123,7 @@ UsuarioColumns.forEach((column) => {
     }
 });
 
-const loadEmpleados = async (
+const loadServicios = async (
     payload: { data: {}; pagination: { page: number; per_page: number } } = {
         data: {},
         pagination: {
@@ -129,18 +143,16 @@ const loadEmpleados = async (
             },
         });
         await nextTick();
-        const response = await empleadoStore.fetchEmpleados({
-            role: 'empleado',
-            paginated: 1,
+        const response = await servicioStore.fetchServicios({
             ...payload.data,
             ...payload.pagination,
+            paginated: 1,
         });
         const res = response.data;
-        empleados.value = res.data || [];
+        servicios.value = res.data || [];
         totalRows.value = res.total || 0;
         totalPages.value = res.last_page || 0;
         currentPage.value = res.current_page || 1;
-
         Swal.close();
     } catch (error) {
         console.error(error);
@@ -148,7 +160,7 @@ const loadEmpleados = async (
 };
 
 onMounted(() => {
-    loadEmpleados();
+    loadServicios();
 });
 </script>
 
@@ -156,33 +168,68 @@ onMounted(() => {
     <Dashboard>
         <template #content>
             <div
-                class="h-full w-auto max-w-[100vw] flex-1 flex-col space-y-8 bg-white p-8"
+                class="h-full w-auto max-w-[100vw] flex-1 flex-col space-y-6 bg-white p-8"
             >
                 <div class="flex items-center justify-between space-y-2">
                     <h1 class="font-serif text-2xl font-bold">
-                        Gestionar Empleados
+                        Gestionar Servicios
                     </h1>
                 </div>
                 <div
-                    class="grid w-full grid-cols-2 items-center lg:grid-cols-3"
+                    class="grid w-full grid-cols-1 items-center gap-4 md:grid-cols-3"
                 >
-                    <Input
-                        id="name"
-                        type="text"
-                        placeholder="Buscar por nombre..."
-                        class="pl-2"
-                        @keydown.enter="updateSearchQuery"
-                    />
+                    <div class="col-span-1 flex flex-col gap-2">
+                        <Label for="nombre">Nombre</Label>
+                        <Input
+                            id="nombre"
+                            type="text"
+                            placeholder="Buscar por nombre..."
+                            class="pl-2"
+                            @keydown.enter="updateSearchQuery"
+                        />
+                    </div>
+                    <div class="col-span-1 flex flex-col gap-2">
+                        <Label for="descripcion">Descripcion</Label>
+                        <Input
+                            id="descripcion"
+                            type="text"
+                            placeholder="Buscar por descripcion..."
+                            class="pl-2"
+                            @keydown.enter="updateSearchQuery"
+                        />
+                    </div>
+                    <div class="col-span-1 flex flex-col gap-2">
+                        <Label for="costo_base">Precio</Label>
+                        <Input
+                            id="costo_base"
+                            type="text"
+                            placeholder="Buscar por precio..."
+                            class="pl-2"
+                            @keydown.enter="updateSearchQuery"
+                        />
+                    </div>
+                </div>
+                <div
+                    class="flex w-full items-center justify-center gap-4 sm:justify-end"
+                >
+                    <Button
+                        class="w-full bg-green-500 text-white hover:bg-green-500/80 sm:w-fit"
+                        as-child
+                    >
+                        <Link :href="route('dashboard.servicios.crear')"
+                            >Nuevo Servicio</Link
+                        >
+                    </Button>
                 </div>
                 <DataTable
-                    :data="empleados"
-                    :key="empleados.length"
-                    :columns="UsuarioColumns"
+                    :data="servicios"
+                    :key="servicios.length"
+                    :columns="ServicioColumns"
                     :columnFilters="columnFilters"
                     :current_page="currentPage"
                     :per_page="perPage"
                     :last_page="totalPages"
-                    :axiosCall="loadEmpleados"
+                    :axiosCall="loadServicios"
                 />
             </div>
         </template>

@@ -1,19 +1,19 @@
+import type { Servicio } from '@/store/servicios';
 import type { ColumnDef } from '@tanstack/vue-table';
-import type { Task } from './UsuarioSchema';
 
-import { useEmpleadoStore } from '@/store/empleados';
+import DataTableColumnHeader from '@/components/DataTableColumnHeader.vue';
+import { estados } from '@/components/ui/data';
+import { useServicioStore } from '@/store/servicios';
 import { router } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 import { h, nextTick } from 'vue';
-import DataTableColumnHeader from '../DataTableColumnHeader.vue';
-import { estados } from './data';
 
-export const desactivar = async (
+export const desactivarServicio = async (
     id: string,
-    empleadoStore: ReturnType<typeof useEmpleadoStore>,
+    servicioStore: ReturnType<typeof useServicioStore>,
 ) => {
     await Swal.fire({
-        title: '¿Esta seguro de eliminar este empleado?',
+        title: '¿Esta seguro de eliminar este servicio?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -23,21 +23,21 @@ export const desactivar = async (
     }).then(async (result: { isConfirmed: any }) => {
         if (result.isConfirmed) {
             await nextTick();
-            await empleadoStore
-                .deleteEmpleado(parseInt(id))
+            await servicioStore
+                .deleteServicio(parseInt(id))
                 .then(async () => {
                     await Swal.fire({
-                        title: 'Empleado eliminado con éxito',
+                        title: 'Servicio eliminado con éxito',
                         icon: 'success',
                         showConfirmButton: true,
                     }).then(() => {
-                        router.get(route('dashboard.empleados'));
+                        router.get(route('dashboard.servicios'));
                     });
                 })
                 .catch(async (error) => {
                     await Swal.fire({
-                        title: 'Error al eliminar al empleado',
-                        text: error.message,
+                        title: 'Error al eliminar al servicio',
+                        text: error.message ?? '',
                         icon: 'error',
                         showConfirmButton: true,
                     }).then((result: { isConfirmed: any }) => {
@@ -50,12 +50,12 @@ export const desactivar = async (
     });
 };
 
-export const activar = async (
+export const activarServicio = async (
     id: string,
-    empleadoStore: ReturnType<typeof useEmpleadoStore>,
+    servicioStore: ReturnType<typeof useServicioStore>,
 ) => {
     await Swal.fire({
-        title: '¿Esta seguro de activar este empleado?',
+        title: '¿Esta seguro de activar este servicio?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -65,21 +65,21 @@ export const activar = async (
     }).then(async (result: { isConfirmed: any }) => {
         if (result.isConfirmed) {
             await nextTick();
-            await empleadoStore
-                .activarEmpleado(parseInt(id))
+            await servicioStore
+                .activarServicio(parseInt(id))
                 .then(async () => {
                     await Swal.fire({
-                        title: 'Empleado activado con éxito',
+                        title: 'Servicio activado con éxito',
                         icon: 'success',
                         showConfirmButton: true,
                     }).then(() => {
-                        router.get(route('dashboard.empleados'));
+                        router.get(route('dashboard.servicios'));
                     });
                 })
                 .catch(async (error) => {
                     await Swal.fire({
-                        title: 'Error al activar al empleado',
-                        text: error.message,
+                        title: 'Error al activar al servicio',
+                        text: error.message ?? '',
                         icon: 'error',
                         showConfirmButton: true,
                     }).then((result: { isConfirmed: any }) => {
@@ -92,7 +92,7 @@ export const activar = async (
     });
 };
 
-export const UsuarioColumns: ColumnDef<Task>[] = [
+export const ServicioColumns: ColumnDef<Servicio>[] = [
     {
         accessorKey: 'id',
         header: ({ column }) =>
@@ -102,26 +102,45 @@ export const UsuarioColumns: ColumnDef<Task>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'name',
+        accessorKey: 'nombre',
         header: ({ column }) =>
             h(DataTableColumnHeader, { column, title: 'Nombre' }),
 
         cell: ({ row }) => {
-            return h('div', { class: 'w-full' }, row.getValue('name'));
+            return h('div', { class: 'w-full' }, row.getValue('nombre'));
         },
     },
     {
-        accessorKey: 'email',
+        accessorKey: 'descripcion',
         header: ({ column }) =>
             h(DataTableColumnHeader, {
                 class: 'w-full',
                 column,
-                title: 'Email',
+                title: 'Descripción',
             }),
 
         cell: ({ row }) => {
-            return h('div', { class: 'w-full' }, row.getValue('email'));
+            return h('div', { class: 'w-full' }, row.getValue('descripcion'));
         },
+    },
+    {
+        accessorKey: 'costo_base',
+        header: ({ column }) =>
+            h(DataTableColumnHeader, {
+                class: 'w-full',
+                column,
+                title: 'Precio $',
+            }),
+
+        cell: ({ row }) => {
+            return h(
+                'div',
+                { class: 'w-full text-right' },
+                parseFloat(row.getValue('costo_base')).toFixed(2),
+            );
+        },
+        enableSorting: true,
+        sortingFn: 'alphanumeric',
     },
     {
         accessorKey: 'estado',
@@ -146,6 +165,7 @@ export const UsuarioColumns: ColumnDef<Task>[] = [
             return value.includes(row.getValue(id));
         },
     },
+
     {
         id: 'actions',
         header: () => h('div', { class: 'w-full' }, 'Acciones'),

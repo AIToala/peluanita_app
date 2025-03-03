@@ -1,19 +1,12 @@
-/* 
-export interface GuiaMovilizacion {
-    id_guia: number
-    id_entidad_logistica: number
-    id_ruta: number
-    id_establecimiento_salida: number
-    id_establecimiento_llegada: number
-    id_conductor: number
-    id_vehiculo: number
-    numero_guia: string
-    fecha_emision: string
-    estado: string
-    tipo_guia: string
-    libras_programadas: number
-    sello_salida: string
-    sello_llegada: string
-}
+import { z } from 'zod';
 
-*/
+// We're keeping a simple non-relational schema here.
+// IRL, you will have a schema for your data models.
+export const usuarioSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string(),
+    estado: z.string(),
+});
+
+export type Usuario = z.infer<typeof usuarioSchema>;

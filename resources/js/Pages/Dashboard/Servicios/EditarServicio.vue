@@ -4,36 +4,38 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Dashboard from '@/Pages/Dashboard/Dashboard.vue';
-import { useEmpleadoStore } from '@/store/empleados';
+import { useServicioStore } from '@/store/servicios';
 import { router, useForm } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 import { nextTick, onMounted, ref } from 'vue';
 
 const form = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-    role: 'empleado',
+    nombre: '',
+    descripcion: '',
+    costo_base: '',
 });
 
-const passwordInput = ref<HTMLInputElement | null>(null);
+const servicioStore = useServicioStore();
+const servicio = ref({
+    id: '',
+    nombre: '',
+    descripcion: '',
+    costo_base: '',
+});
 
-const empleadoStore = useEmpleadoStore();
-const empleado = ref({ name: '', email: '', id: '' });
-
-const getEmpleado = async (id: string) => {
+const getServicio = async (id_servicio: string) => {
     try {
         await nextTick();
-        await empleadoStore
-            .fetchEmpleados({
-                id_usuario: id,
+        await servicioStore
+            .fetchServicios({
+                id_servicio,
                 paginated: 0,
             })
             .then((response) => {
-                empleado.value = response.data[0];
-                form.name = empleado.value.name;
-                form.email = empleado.value.email;
+                servicio.value = response.data[0];
+                form.nombre = servicio.value.nombre;
+                form.descripcion = servicio.value.descripcion;
+                form.costo_base = servicio.value.costo_base;
             })
             .catch((error) => {
                 console.error(error);
@@ -42,10 +44,32 @@ const getEmpleado = async (id: string) => {
         console.error(error);
     }
 };
+const formatCurrency = () => {
+    if (!form.costo_base || form.costo_base.trim() === '') {
+        form.costo_base = '0.00';
+        return;
+    }
+
+    let money = form.costo_base.replace(/[^0-9.]/g, '');
+
+    const parts = money.split('.');
+    if (parts.length > 2) {
+        money = parts[0] + '.' + parts.slice(1).join('');
+    }
+
+    const number = parseFloat(money);
+    form.costo_base = isNaN(number)
+        ? '0.00'
+        : number.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+          });
+    form.costo_base = form.costo_base.replace(/,/g, '');
+};
 
 const submit = async () => {
     await Swal.fire({
-        title: '¿Esta seguro de editar este empleado?',
+        title: '¿Esta seguro de editar este servicio?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -55,24 +79,20 @@ const submit = async () => {
     }).then(async (result: { isConfirmed: any }) => {
         if (result.isConfirmed) {
             await nextTick();
-            await empleadoStore
-                .updateEmpleado({
-                    id: empleado.value.id,
-                    name: form.name,
-                    email: form.email,
-                    password: form.password,
-                    password_confirmation: form.password_confirmation,
-                    role: form.role,
+            await servicioStore
+                .updateServicio({
+                    id: servicio.value.id,
+                    nombre: form.nombre,
+                    descripcion: form.descripcion,
                 })
                 .then(async () => {
                     await Swal.fire({
-                        title: 'Empleado actualizado con éxito',
+                        title: 'Servicio actualizado con éxito',
                         icon: 'success',
                         showConfirmButton: true,
                     }).then(() => {
-                        router.get(route('dashboard.empleados'));
+                        router.get(route('dashboard.servicios'));
                     });
-                    form.reset('password', 'password_confirmation');
                 })
                 .catch(async (error) => {
                     const e: any =
@@ -86,13 +106,12 @@ const submit = async () => {
                     }
                     const err = e.length > 1 ? e[0].toString() : e.join(', ');
                     await Swal.fire({
-                        title: 'Error al actualizar el empleado',
+                        title: 'Error al actualizar el servicio',
                         text: err ?? '',
                         icon: 'error',
                         showConfirmButton: true,
                     }).then((result: { isConfirmed: any }) => {
                         if (result.isConfirmed) {
-                            form.reset('password', 'password_confirmation');
                             console.error(error);
                         }
                     });
@@ -102,7 +121,7 @@ const submit = async () => {
 };
 
 onMounted(() => {
-    getEmpleado(route().params.id);
+    getServicio(route().params.id);
 });
 </script>
 
@@ -113,76 +132,64 @@ onMounted(() => {
                 class="h-full w-auto max-w-[100vw] flex-1 flex-col space-y-8 bg-white p-8"
             >
                 <h1 class="text-2xl font-semibold text-gray-900">
-                    Editar Empleado
+                    Editar Servicio
                 </h1>
                 <form
                     @submit.prevent="submit"
                     class="mt-6 w-full space-y-6 rounded-lg bg-gray-50 px-6 py-4 shadow-lg"
                 >
                     <div>
-                        <InputLabel for="name" value="Nombre" />
+                        <InputLabel for="nombre" value="Nombre" />
 
                         <TextInput
-                            id="name"
+                            id="nombre"
                             type="text"
                             class="mt-1 block w-full"
-                            v-model="form.name"
+                            v-model="form.nombre"
                             required
                             autofocus
-                            autocomplete="name"
+                            autocomplete="nombre"
                         />
 
-                        <InputError class="mt-2" :message="form.errors.name" />
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.nombre"
+                        />
                     </div>
                     <div>
-                        <InputLabel for="email" value="Email" />
+                        <InputLabel for="descripcion" value="descripcion" />
 
                         <TextInput
-                            id="email"
-                            type="email"
+                            id="descripcion"
+                            type="text"
                             class="mt-1 block w-full"
-                            v-model="form.email"
+                            v-model="form.descripcion"
                             required
-                            autocomplete="username"
-                        />
-
-                        <InputError class="mt-2" :message="form.errors.email" />
-                    </div>
-                    <div>
-                        <InputLabel for="password" value="Nueva Contraseña" />
-
-                        <TextInput
-                            id="password"
-                            ref="passwordInput"
-                            v-model="form.password"
-                            type="password"
-                            class="mt-1 block w-full"
-                            autocomplete="new-password"
+                            autocomplete="descripcion"
                         />
 
                         <InputError
-                            :message="form.errors.password"
                             class="mt-2"
+                            :message="form.errors.descripcion"
                         />
                     </div>
 
-                    <div>
-                        <InputLabel
-                            for="password_confirmation"
-                            value="Confirmar Nueva Contraseña"
-                        />
+                    <div class="mt-4">
+                        <InputLabel for="costo_base" value="Precio" />
 
                         <TextInput
-                            id="password_confirmation"
-                            v-model="form.password_confirmation"
-                            type="password"
+                            id="costo_base"
+                            type="text"
                             class="mt-1 block w-full"
-                            autocomplete="new-password"
+                            v-model="form.costo_base"
+                            required
+                            autocomplete="costo_base"
+                            @blur="formatCurrency"
                         />
 
                         <InputError
-                            :message="form.errors.password_confirmation"
                             class="mt-2"
+                            :message="form.errors.costo_base"
                         />
                     </div>
 

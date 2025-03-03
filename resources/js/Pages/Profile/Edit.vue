@@ -12,7 +12,6 @@ defineProps<{
 }>();
 
 const userAuth = computed(() => {
-    console.log(usePage().props.auth.user);
     return {
         name: usePage().props.auth.user.name,
         email: usePage().props.auth.user.email,

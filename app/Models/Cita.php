@@ -10,7 +10,6 @@ class Cita extends Model
     use HasFactory;
 
     protected $table = 'citas';
-    protected $primaryKey = 'id_cita';
     public $incrementing = true;
     public $timestamps = true;
 

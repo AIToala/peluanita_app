@@ -1,24 +1,30 @@
 <script setup lang="ts">
-import type {
-    ColumnDef,
-    ColumnFiltersState,
-    SortingState,
-} from '@tanstack/vue-table';
-import type { Task } from './UsuarioSchema';
+import { Button } from '@/components/ui/button';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import type { ColumnDef, SortingState } from '@tanstack/vue-table';
+import {
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+} from 'lucide-vue-next';
 
 import { valueUpdater } from '@/lib/utils';
 import {
     FlexRender,
     getCoreRowModel,
-    getFacetedRowModel,
-    getFacetedUniqueValues,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     useVueTable,
 } from '@tanstack/vue-table';
-import { ref, watch } from 'vue';
-import DataTablePagination from '../DataTablePagination.vue';
+import { ref } from 'vue';
 import {
     Table,
     TableBody,
@@ -28,24 +34,35 @@ import {
     TableRow,
 } from './table';
 
-interface DataTableProps {
-    columns: ColumnDef<Task, any>[];
-    data: Task[];
-    columnFilters: ColumnFiltersState;
-    searchQuery: { id: string; value: string | number }[];
+interface DataTableProps<T> {
+    columns: ColumnDef<T, any>[];
+    data: T[];
+    current_page: number;
+    per_page: number;
+    last_page: number;
+    columnFilters?: any[];
+    axiosCall: (payload: {
+        data: {};
+        pagination: { page: number; per_page: number };
+    }) => Promise<void>;
 }
-const props = defineProps<DataTableProps>();
+const props = defineProps<DataTableProps<any>>();
 const columnFilters = ref(props.columnFilters);
 const sorting = ref<SortingState>([]);
 const rowSelection = ref({});
+const pagination = ref({
+    pageIndex: props.current_page - 1,
+    pageSize: props.per_page,
+});
 
 const table = useVueTable({
     get data() {
-        return props.data;
+        return props.data || [];
     },
     get columns() {
         return props.columns;
     },
+    pageCount: props.last_page,
     state: {
         get sorting() {
             return sorting.value;
@@ -55,6 +72,9 @@ const table = useVueTable({
         },
         get rowSelection() {
             return rowSelection.value;
+        },
+        get pagination() {
+            return pagination.value;
         },
     },
     enableRowSelection: true,
@@ -67,18 +87,18 @@ const table = useVueTable({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-});
-watch(
-    () => props.searchQuery,
-    (newVal) => {
-        const id = newVal[0]?.id;
-        const newValue = newVal[0]?.value;
-        table.getColumn(id)?.setFilterValue(newValue || '');
+    manualPagination: true,
+    onPaginationChange: async (updater) => {
+        valueUpdater(updater, pagination);
+        await props.axiosCall({
+            data: {},
+            pagination: {
+                page: pagination.value.pageIndex + 1,
+                per_page: pagination.value.pageSize,
+            },
+        });
     },
-    { deep: true },
-);
+});
 </script>
 
 <template>
@@ -133,7 +153,82 @@ watch(
             </Table>
         </div>
 
-        <DataTablePagination :table="table" />
+        <div class="flex items-center justify-between px-2">
+            <div class="flex-1 text-sm text-muted-foreground">
+                {{ table.getFilteredSelectedRowModel().rows.length }} of
+                {{ table.getFilteredRowModel().rows.length }} row(s) selected.
+            </div>
+            <div class="flex items-center space-x-6 lg:space-x-8">
+                <div class="flex items-center space-x-2">
+                    <p class="text-sm font-medium">Rows per page</p>
+                    <Select
+                        :model-value="`${table.getState().pagination.pageSize.toString()}`"
+                        @update:model-value="
+                            (value) => table.setPageSize(Number(value))
+                        "
+                    >
+                        <SelectTrigger class="h-8 w-[70px]">
+                            <SelectValue
+                                :placeholder="`${table.getState().pagination.pageSize.toString()}`"
+                            />
+                        </SelectTrigger>
+                        <SelectContent side="top">
+                            <SelectItem
+                                v-for="pageSize in [10, 20, 30, 40, 50]"
+                                :key="pageSize"
+                                :value="`${pageSize.toString()}`"
+                            >
+                                {{ pageSize }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div
+                    class="flex w-[100px] items-center justify-center text-sm font-medium"
+                >
+                    Page {{ table.getState().pagination.pageIndex + 1 }} of
+                    {{ table.getPageCount() }}
+                </div>
+                <div class="flex items-center space-x-2">
+                    <Button
+                        variant="outline"
+                        class="hidden h-8 w-8 p-0 lg:flex"
+                        :disabled="!table.getCanPreviousPage()"
+                        @click="table.setPageIndex(0)"
+                    >
+                        <span class="sr-only">Go to first page</span>
+                        <ChevronsLeft class="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="outline"
+                        class="h-8 w-8 p-0"
+                        :disabled="!table.getCanPreviousPage()"
+                        @click="table.previousPage()"
+                    >
+                        <span class="sr-only">Go to previous page</span>
+                        <ChevronLeft class="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="outline"
+                        class="h-8 w-8 p-0"
+                        :disabled="!table.getCanNextPage()"
+                        @click="table.nextPage()"
+                    >
+                        <span class="sr-only">Go to next page</span>
+                        <ChevronRight class="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="outline"
+                        class="hidden h-8 w-8 p-0 lg:flex"
+                        :disabled="!table.getCanNextPage()"
+                        @click="table.setPageIndex(table.getPageCount() - 1)"
+                    >
+                        <span class="sr-only">Go to last page</span>
+                        <ChevronsRight class="h-4 w-4" />
+                    </Button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 

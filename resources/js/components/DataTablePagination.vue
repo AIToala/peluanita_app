@@ -7,7 +7,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import type { Task } from '@/components/ui/UsuarioSchema';
 import type { Table } from '@tanstack/vue-table';
 import {
     ChevronLeft,
@@ -16,21 +15,19 @@ import {
     ChevronsRight,
 } from 'lucide-vue-next';
 
-interface DataTablePaginationProps {
-    table: Table<Task>;
+interface DataTablePaginationProps<T> {
+    table: Table<T>;
 }
-defineProps<DataTablePaginationProps>();
+defineProps<DataTablePaginationProps<any>>();
 </script>
 
 <template>
-    <div
-        class="flex w-full flex-col items-center justify-between space-x-2 space-y-2 px-2 md:flex-row"
-    >
+    <div class="flex items-center justify-between px-2">
         <div class="flex-1 text-sm text-muted-foreground">
             {{ table.getFilteredSelectedRowModel().rows.length }} of
             {{ table.getFilteredRowModel().rows.length }} row(s) selected.
         </div>
-        <div class="flex items-center space-x-3 lg:space-x-6">
+        <div class="flex items-center space-x-6 lg:space-x-8">
             <div class="flex items-center space-x-2">
                 <p class="text-sm font-medium">Rows per page</p>
                 <Select
@@ -55,8 +52,6 @@ defineProps<DataTablePaginationProps>();
                     </SelectContent>
                 </Select>
             </div>
-        </div>
-        <div class="flex flex-row items-center justify-center">
             <div
                 class="flex w-[100px] items-center justify-center text-sm font-medium"
             >
@@ -66,7 +61,7 @@ defineProps<DataTablePaginationProps>();
             <div class="flex items-center space-x-2">
                 <Button
                     variant="outline"
-                    class="hidden h-8 w-8 !bg-white p-0 lg:flex"
+                    class="hidden h-8 w-8 p-0 lg:flex"
                     :disabled="!table.getCanPreviousPage()"
                     @click="table.setPageIndex(0)"
                 >
@@ -75,7 +70,7 @@ defineProps<DataTablePaginationProps>();
                 </Button>
                 <Button
                     variant="outline"
-                    class="h-8 w-8 !bg-white p-0"
+                    class="h-8 w-8 p-0"
                     :disabled="!table.getCanPreviousPage()"
                     @click="table.previousPage()"
                 >
@@ -84,7 +79,7 @@ defineProps<DataTablePaginationProps>();
                 </Button>
                 <Button
                     variant="outline"
-                    class="h-8 w-8 !bg-white p-0"
+                    class="h-8 w-8 p-0"
                     :disabled="!table.getCanNextPage()"
                     @click="table.nextPage()"
                 >
@@ -93,7 +88,7 @@ defineProps<DataTablePaginationProps>();
                 </Button>
                 <Button
                     variant="outline"
-                    class="hidden h-8 w-8 !bg-white p-0 lg:flex"
+                    class="hidden h-8 w-8 p-0 lg:flex"
                     :disabled="!table.getCanNextPage()"
                     @click="table.setPageIndex(table.getPageCount() - 1)"
                 >

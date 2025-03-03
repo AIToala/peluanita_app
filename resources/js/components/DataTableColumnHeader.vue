@@ -7,17 +7,16 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { Task } from '@/components/ui/UsuarioSchema';
 import { cn } from '@/lib/utils';
 import type { Column } from '@tanstack/vue-table';
 import { ArrowDown, ArrowDownUp, ArrowUp } from 'lucide-vue-next';
 
-interface DataTableColumnHeaderProps {
-    column: Column<Task, any>;
+interface DataTableColumnHeaderProps<T> {
+    column: Column<T, any>;
     title: string;
 }
 
-defineProps<DataTableColumnHeaderProps>();
+defineProps<DataTableColumnHeaderProps<any>>();
 </script>
 
 <script lang="ts">

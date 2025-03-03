@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nombre')->unique();
             $table->string('descripcion');
             $table->decimal('costo_base', 8, 2);
+            $table->integer('estado')->default(1);
 
             $table->timestamps();
         });

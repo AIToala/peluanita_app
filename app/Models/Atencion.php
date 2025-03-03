@@ -10,7 +10,6 @@ class Atencion extends Model
     use HasFactory;
 
     protected $table = 'atenciones';
-    protected $primaryKey = 'id_atencion';
     public $incrementing = true;
     public $timestamps = true;
 
@@ -27,7 +26,7 @@ class Atencion extends Model
 
     public function servicio()
     {
-        return $this->hasOne(Servicio::class, 'id_servicio', 'id_servicio');
+        return $this->hasOne(Servicio::class, 'id_servicio', 'id');
     }
 
     public function cliente()

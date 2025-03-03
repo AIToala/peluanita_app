@@ -32,6 +32,7 @@ class UserController extends AuthDataController
                     fn ($q) => $q->paginate($request['per_page'] ?? 10),
                     fn ($q) => $q->get(),
                 );
+            $result->makeHidden(['created_at', 'updated_at', 'email_verified_at', 'password']);
             return response()->json($result, 200);
         } catch (\Throwable $th) {
             LogUtils::error($th);

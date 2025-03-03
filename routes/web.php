@@ -36,21 +36,36 @@ Route::middleware('auth', 'verified', 'check.role:admin')->group(function () {
     Route::get('/admin/roles', function () {
         return Inertia::render('Admin/Roles');
     })->name('admin.roles');
-    Route::get('/dashboard/empleados/crear', function () {
-        return Inertia::render('Dashboard/Empleados/CrearEmpleado');
-    })->name('dashboard.empleados.crear');
-    Route::get('/dashboard/empleados/{id}', function () {
-        return Inertia::render('Dashboard/Empleados/EditarEmpleado');
-    })->name('dashboard.empleados.editar');
-    Route::get('/dashboard/empleados/{id}/eliminar', function () {
-        return Inertia::render('Dashboard/Empleados/EliminarEmpleado');
-    })->name('dashboard.empleados.eliminar');
-});
-
-Route::middleware('auth', 'verified', 'check.role:admin')->group(function () {
-    Route::get('/dashboard/empleados', function () {
-        return Inertia::render('Dashboard/Empleados/GestionarEmpleados');
-    })->name('dashboard.empleados');
+    Route::prefix('dashboard')->group(function (): void {
+        Route::prefix('empleados')->group(function (): void {
+            Route::get('', function () {
+                return Inertia::render('Dashboard/Empleados/GestionarEmpleados');
+            })->name('dashboard.empleados');
+            Route::get('crear', function () {
+                return Inertia::render('Dashboard/Empleados/CrearEmpleado');
+            })->name('dashboard.empleados.crear');
+            Route::get('{id}', function () {
+                return Inertia::render('Dashboard/Empleados/EditarEmpleado');
+            })->name('dashboard.empleados.editar');
+            Route::get('{id}/eliminar', function () {
+                return Inertia::render('Dashboard/Empleados/EliminarEmpleado');
+            })->name('dashboard.empleados.eliminar');
+        });
+        Route::prefix('servicios')->group(function (): void {
+            Route::get('', function () {
+                return Inertia::render('Dashboard/Servicios/GestionarServicios');
+            })->name('dashboard.servicios');
+            Route::get('crear', function () {
+                return Inertia::render('Dashboard/Servicios/CrearServicio');
+            })->name('dashboard.servicios.crear');
+            Route::get('{id}', function () {
+                return Inertia::render('Dashboard/Servicios/EditarServicio');
+            })->name('dashboard.servicios.editar');
+            Route::get('{id}/eliminar', function () {
+                return Inertia::render('Dashboard/Servicios/EliminarServicio');
+            })->name('dashboard.servicios.eliminar');
+        });
+    });
 });
 
 Route::get('/dashboard', function () {

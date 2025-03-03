@@ -102,11 +102,11 @@ const data = {
             items: [
                 {
                     title: 'Crear Servicio',
-                    url: '#',
+                    url: route('dashboard.servicios.crear'),
                 },
                 {
                     title: 'Manejar Servicios',
-                    url: '#',
+                    url: route('dashboard.servicios'),
                 },
             ],
         },

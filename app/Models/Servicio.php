@@ -10,17 +10,22 @@ class Servicio extends Model
     use HasFactory;
 
     protected $table = 'servicios';
-    protected $primaryKey = 'id_servicio';
     public $incrementing = true;
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'nombre',
         'descripcion',
         'costo_base',
+        'estado',
     ];
 
     protected $casts = [
         'costo_base' => 'decimal:2',
     ];
+
+    public function setNombreAttribute($value)
+    {
+        $this->attributes['nombre'] = mb_strtoupper($value, 'UTF-8');
+    }
 }
