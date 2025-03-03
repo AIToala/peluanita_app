@@ -92,7 +92,7 @@ export const activar = async (
     });
 };
 
-export const UsuarioColumns: ColumnDef<Usuario>[] = [
+export const EmpleadoColumns: ColumnDef<Usuario>[] = [
     {
         accessorKey: 'id',
         header: ({ column }) =>

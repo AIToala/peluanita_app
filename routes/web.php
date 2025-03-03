@@ -29,13 +29,35 @@ Route::get('/', function () {
     ]);
 });
 
+Route::middleware('auth', 'verified', 'check.role:admin|empleado|cliente')->group(function () {
+    Route::prefix('dashboard')->group(function (): void {
+        Route::prefix('clientes')->group(function (): void {
+            Route::get('crear', function () {
+                return Inertia::render('Dashboard/Clientes/CrearCliente');
+            })->name('dashboard.clientes.crear');
+        });
+    });
+});
+
+Route::middleware('auth', 'verified', 'check.role:admin|empleado')->group(function () {
+    Route::prefix('dashboard')->group(function (): void {
+        Route::prefix('clientes')->group(function (): void {
+            Route::get('', function () {
+                return Inertia::render('Dashboard/Clientes/GestionarClientes');
+            })->name('dashboard.clientes');
+            Route::get('{id}', function () {
+                return Inertia::render('Dashboard/Clientes/EditarCliente');
+            })->name('dashboard.clientes.editar');
+            Route::get('{id}/eliminar', function () {
+                return Inertia::render('Dashboard/Clientes/EliminarCliente');
+            })->name('dashboard.clientes.eliminar');
+        });
+    });
+});
+
+
+
 Route::middleware('auth', 'verified', 'check.role:admin')->group(function () {
-    Route::get('/dashboard/admin', function () {
-        return Inertia::render('Dashboard/Admin/Admin');
-    })->name('dashboard.admin');
-    Route::get('/admin/roles', function () {
-        return Inertia::render('Admin/Roles');
-    })->name('admin.roles');
     Route::prefix('dashboard')->group(function (): void {
         Route::prefix('empleados')->group(function (): void {
             Route::get('', function () {
@@ -83,16 +105,6 @@ Route::prefix('auth')->group(function (): void {
 
 require __DIR__.'/auth.php';
 
-
-/* Route::group(['prefix' => 'usuarios', 'middleware' => ['auth:sanctum', 'ex.bad_request', 'verified', 'check.role:admin|empleado'], 'controller' => UserController::class], function (): void {
-    Route::get('', 'index')->name('usuarios.index');
-    //Route::get('/{id}', 'show')->name('usuarios.show');
-    //Route::post('/', 'store')->name('usuarios.store');
-    //Route::put('/{id}', 'update')->name('usuarios.update');
-    //Route::delete('/{id}', 'destroy')->name('usuarios.destroy');
-}); */
-
-//Inicio de sesion
 Route::get('/{any}', [ApplicationController::class, 'index'])->where('any', '^(?!aplicaciones|telescope)(.*)')->name('inicio');
 
 //Inicio de sesion

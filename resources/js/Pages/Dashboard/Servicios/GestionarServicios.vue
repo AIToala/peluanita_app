@@ -143,16 +143,31 @@ const loadServicios = async (
             },
         });
         await nextTick();
-        const response = await servicioStore.fetchServicios({
-            ...payload.data,
-            ...payload.pagination,
-            paginated: 1,
-        });
-        const res = response.data;
-        servicios.value = res.data || [];
-        totalRows.value = res.total || 0;
-        totalPages.value = res.last_page || 0;
-        currentPage.value = res.current_page || 1;
+        const response = await servicioStore
+            .fetchServicios({
+                ...payload.data,
+                ...payload.pagination,
+                paginated: 1,
+            })
+            .catch(async (error) => {
+                await Swal.fire({
+                    title: 'Error',
+                    text: error.message ?? '',
+                    icon: 'error',
+                    showConfirmButton: true,
+                }).then(async (result: { isConfirmed: any }) => {
+                    if (result.isConfirmed) {
+                        console.error(error);
+                    }
+                });
+            });
+        if (response) {
+            const res = response.data;
+            servicios.value = res.data || [];
+            totalRows.value = res.total || 0;
+            totalPages.value = res.last_page || 0;
+            currentPage.value = res.current_page || 1;
+        }
         Swal.close();
     } catch (error) {
         console.error(error);
@@ -194,16 +209,6 @@ onMounted(() => {
                             id="descripcion"
                             type="text"
                             placeholder="Buscar por descripcion..."
-                            class="pl-2"
-                            @keydown.enter="updateSearchQuery"
-                        />
-                    </div>
-                    <div class="col-span-1 flex flex-col gap-2">
-                        <Label for="costo_base">Precio</Label>
-                        <Input
-                            id="costo_base"
-                            type="text"
-                            placeholder="Buscar por precio..."
                             class="pl-2"
                             @keydown.enter="updateSearchQuery"
                         />

@@ -1,3 +1,3 @@
 export * from './domain/empleado';
-export * from './domain/UsuarioColumns';
+export * from './domain/EmpleadoColumns';
 export * from './repository/empleadoStore';

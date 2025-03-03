@@ -3,21 +3,25 @@ import Button from '@/components/ui/button/Button.vue';
 import DataTable from '@/components/ui/DataTable.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useEmpleadoStore } from '@/store/empleados';
-import { EmpleadoColumns, activar, desactivar } from '@/store/empleados/index';
+import {
+    ClienteColumns,
+    activar,
+    desactivar,
+} from '@/store/clientes/domain/ClienteColumns';
+import { useClienteStore } from '@/store/clientes/index';
 import { Link } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 import { h, nextTick, onMounted, ref } from 'vue';
 import Dashboard from '../Dashboard.vue';
 
-const empleadoStore = useEmpleadoStore();
+const clienteStore = useClienteStore();
 
 interface SearchParams {
     id: string;
     value: string | number;
 }
 
-const empleados = ref([]);
+const clientes = ref([]);
 const totalRows = ref(0);
 const currentPage = ref(1);
 const perPage = ref(10);
@@ -37,7 +41,7 @@ const updateSearchQuery = (e: { target: { value: any; id: any } }) => {
     } else {
         searchQuery.value.push(search);
     }
-    loadEmpleados({
+    loadClientes({
         data: (() => {
             const data: { [key: string]: string | number } = {};
             searchQuery.value.forEach(({ id, value }) => {
@@ -52,7 +56,7 @@ const updateSearchQuery = (e: { target: { value: any; id: any } }) => {
     });
 };
 
-EmpleadoColumns.forEach((column) => {
+ClienteColumns.forEach((column) => {
     if (column.id === 'actions') {
         column.cell = ({ row }) =>
             h(
@@ -65,10 +69,7 @@ EmpleadoColumns.forEach((column) => {
                               {
                                   class: 'bg-green-500 hover:bg-green-500/80',
                                   onClick: () =>
-                                      activar(
-                                          row.getValue('id'),
-                                          empleadoStore,
-                                      ),
+                                      activar(row.getValue('id'), clienteStore),
                               },
                               {
                                   default: () => ['Activar'],
@@ -88,7 +89,7 @@ EmpleadoColumns.forEach((column) => {
                                           Link,
                                           {
                                               href: route(
-                                                  'dashboard.empleados.editar',
+                                                  'dashboard.clientes.editar',
                                                   {
                                                       id: row.getValue('id'),
                                                   },
@@ -107,7 +108,7 @@ EmpleadoColumns.forEach((column) => {
                                   onClick: () =>
                                       desactivar(
                                           row.getValue('id'),
-                                          empleadoStore,
+                                          clienteStore,
                                       ),
                               },
                               {
@@ -119,7 +120,7 @@ EmpleadoColumns.forEach((column) => {
     }
 });
 
-const loadEmpleados = async (
+const loadClientes = async (
     payload: { data: {}; pagination: { page: number; per_page: number } } = {
         data: {},
         pagination: {
@@ -139,9 +140,8 @@ const loadEmpleados = async (
             },
         });
         await nextTick();
-        const response = await empleadoStore
-            .fetchEmpleados({
-                role: 'empleado',
+        const response = await clienteStore
+            .fetchClientes({
                 paginated: 1,
                 ...payload.data,
                 ...payload.pagination,
@@ -160,7 +160,7 @@ const loadEmpleados = async (
             });
         if (response) {
             const res = response.data;
-            empleados.value = res.data || [];
+            clientes.value = res.data || [];
             totalRows.value = res.total || 0;
             totalPages.value = res.last_page || 0;
             currentPage.value = res.current_page || 1;
@@ -172,7 +172,7 @@ const loadEmpleados = async (
 };
 
 onMounted(() => {
-    loadEmpleados();
+    loadClientes();
 });
 </script>
 
@@ -184,28 +184,18 @@ onMounted(() => {
             >
                 <div class="flex items-center justify-between space-y-2">
                     <h1 class="font-serif text-2xl font-bold">
-                        Gestionar Empleados
+                        Gestionar Clientes
                     </h1>
                 </div>
                 <div
                     class="grid w-full grid-cols-1 items-center gap-4 md:grid-cols-3"
                 >
                     <div class="col-span-1 flex flex-col gap-2">
-                        <Label for="name">Nombre</Label>
+                        <Label for="nombre">Nombre</Label>
                         <Input
-                            id="name"
+                            id="nombre"
                             type="text"
                             placeholder="Buscar por nombre..."
-                            class="pl-2"
-                            @keydown.enter="updateSearchQuery"
-                        />
-                    </div>
-                    <div class="col-span-1 flex flex-col gap-2">
-                        <Label for="email">Email</Label>
-                        <Input
-                            id="email"
-                            type="text"
-                            placeholder="Buscar por email..."
                             class="pl-2"
                             @keydown.enter="updateSearchQuery"
                         />
@@ -218,20 +208,20 @@ onMounted(() => {
                         class="w-full bg-green-500 text-white hover:bg-green-500/80 sm:w-fit"
                         as-child
                     >
-                        <Link :href="route('dashboard.empleados.crear')"
-                            >Nuevo Empleado</Link
+                        <Link :href="route('dashboard.servicios.crear')"
+                            >Nuevo Cliente</Link
                         >
                     </Button>
                 </div>
                 <DataTable
-                    :data="empleados"
-                    :key="empleados.length"
-                    :columns="EmpleadoColumns"
+                    :data="clientes"
+                    :key="clientes.length"
+                    :columns="ClienteColumns"
                     :columnFilters="columnFilters"
                     :current_page="currentPage"
                     :per_page="perPage"
                     :last_page="totalPages"
-                    :axiosCall="loadEmpleados"
+                    :axiosCall="loadClientes"
                 />
             </div>
         </template>

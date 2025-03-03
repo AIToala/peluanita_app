@@ -31,4 +31,9 @@ class Cliente extends Model
     {
         return $this->belongsTo(User::class, 'id_usuario', 'id');
     }
+
+    public function getNombreCompleto()
+    {
+        return mb_strtoupper($this->nombre) . ' ' . mb_strtoupper($this->apellido);
+    }
 }

@@ -68,11 +68,11 @@ const data = {
             items: [
                 {
                     title: 'Crear Cliente',
-                    url: '#',
+                    url: route('dashboard.clientes.crear'),
                 },
                 {
                     title: 'Manejar Clientes',
-                    url: '#',
+                    url: route('dashboard.clientes'),
                 },
             ],
         },

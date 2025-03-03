@@ -90,8 +90,10 @@ const submit = async () => {
                         title: 'Servicio actualizado con éxito',
                         icon: 'success',
                         showConfirmButton: true,
-                    }).then(() => {
-                        router.get(route('dashboard.servicios'));
+                    }).then((result: { isConfirmed: any }) => {
+                        if (result.isConfirmed) {
+                            router.get(route('dashboard.servicios'));
+                        }
                     });
                 })
                 .catch(async (error) => {

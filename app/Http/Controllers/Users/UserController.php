@@ -13,7 +13,6 @@ use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
 
 class UserController extends AuthDataController
 {
@@ -48,17 +47,19 @@ class UserController extends AuthDataController
 
     public function store(StoreUserRequest $request)
     {
-        \Log::info($request->all());
         try {
             \DB::beginTransaction();
             if (in_array($request->role, ['admin', 'empleado'])) {
                 if (!Auth::user() || !Auth::user()->hasRole(['admin', 'empleado'])) {
                     throw new \Exception('No tienes permisos para crear este usuario');
                 }
-                \Log::info('User has permission to create admin or empleado');
             } else {
                 // Assign the 'cliente' role to the user by default
                 $request->merge(['role' => 'cliente']);
+            }
+            $userWithSameEmail = User::where('email', $request->email)->first();
+            if ($userWithSameEmail) {
+                throw new \Exception('El email ya está registrado');
             }
             $user = User::create([
                 'name' => $request->name,
