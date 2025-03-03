@@ -24,11 +24,11 @@ axiosIns.interceptors.response.use(
         return response;
     },
     async (error) => {
-        if (error.response.status === 419) {
+        if (error.status === 419) {
             await axiosIns.get(route('sanctum/csrf-cookie'));
             return axiosIns.request(error.config);
         }
-        return Promise.reject(error);
+        return Promise.reject(error.response.data);
     },
 );
 

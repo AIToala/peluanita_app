@@ -73,7 +73,6 @@ const table = useVueTable({
 watch(
     () => props.searchQuery,
     (newVal) => {
-        console.log(newVal);
         const id = newVal[0]?.id;
         const newValue = newVal[0]?.value;
         table.getColumn(id)?.setFilterValue(newValue || '');

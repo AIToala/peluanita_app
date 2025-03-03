@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import Button from '@/components/ui/button/Button.vue';
 import DataTable from '@/components/ui/DataTable.vue';
 import { Input } from '@/components/ui/input';
-import { UsuarioColumns } from '@/components/ui/UsuarioColumns';
+import {
+    UsuarioColumns,
+    activar,
+    desactivar,
+} from '@/components/ui/UsuarioColumns';
 import { useEmpleadoStore } from '@/store/empleados';
-import { onMounted, ref } from 'vue';
+import { Link } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
+import { h, nextTick, onMounted, ref } from 'vue';
 import Dashboard from '../Dashboard.vue';
 
 const empleadoStore = useEmpleadoStore();
@@ -28,25 +35,102 @@ const updateSearchQuery = (e: { target: { value: any; id: any } }) => {
     } else {
         searchQuery.value.push(search);
     }
-    console.log(searchQuery.value);
 };
+
+UsuarioColumns.forEach((column) => {
+    if (column.id === 'actions') {
+        column.cell = ({ row }) =>
+            h(
+                'div',
+                { class: 'flex w-[20%] items-center gap-2' },
+                row.getValue('estado') == 0
+                    ? [
+                          h(
+                              Button,
+                              {
+                                  class: 'bg-green-500 hover:bg-green-500/80',
+                                  onClick: () =>
+                                      activar(
+                                          row.getValue('id'),
+                                          empleadoStore,
+                                      ),
+                              },
+                              {
+                                  default: () => ['Activar'],
+                              },
+                          ),
+                      ]
+                    : [
+                          h(
+                              Button,
+                              {
+                                  asChild: true,
+                              },
+                              {
+                                  default: () =>
+                                      h(
+                                          Link,
+                                          {
+                                              href: route(
+                                                  'dashboard.empleados.editar',
+                                                  {
+                                                      id: row.getValue('id'),
+                                                  },
+                                              ),
+                                          },
+                                          {
+                                              default: () => ['Editar'],
+                                          },
+                                      ),
+                              },
+                          ),
+                          h(
+                              Button,
+                              {
+                                  variant: 'destructive',
+                                  onClick: () =>
+                                      desactivar(
+                                          row.getValue('id'),
+                                          empleadoStore,
+                                      ),
+                              },
+                              {
+                                  default: () => ['Eliminar'],
+                              },
+                          ),
+                      ],
+            );
+    }
+});
 
 const loadEmpleados = async () => {
     try {
-        const response = await empleadoStore
+        Swal.fire({
+            title: 'Cargando',
+            text: 'Por favor espere',
+            icon: 'info',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+        await nextTick();
+        await empleadoStore
             .fetchEmpleados({
+                role: 'empleado',
                 page: 1,
                 perPage: 10,
             })
             .then((response) => {
                 const res = response.data;
                 empleados.value = res.data;
+                Swal.close();
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
             });
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 };
 
@@ -58,7 +142,9 @@ onMounted(() => {
 <template>
     <Dashboard>
         <template #content>
-            <div class="h-full w-full flex-1 flex-col space-y-8 p-8">
+            <div
+                class="h-full w-auto max-w-[100vw] flex-1 flex-col space-y-8 bg-white p-8"
+            >
                 <div class="flex items-center justify-between space-y-2">
                     <h1 class="font-serif text-2xl font-bold">
                         Gestionar Empleados

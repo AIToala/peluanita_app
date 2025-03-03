@@ -18,10 +18,11 @@ class InternationalizationMiddleware
     public function handle(Request $request, Closure $next)
     {
         // Check header request and determine localizaton
-        $local = ($request->hasHeader('X-localization')) ? $request->header('X-localization') : 'en';
+        $local = ($request->hasHeader('X-localization')) ? $request->header('X-localization') : 'es';
         // set laravel localization
-        app()->setLocale($local);
-        Carbon::setLocale($local);
+        $locale = 'es';
+        app()->setLocale($locale);
+        Carbon::setLocale($locale);
         // continue request
         return $next($request);
     }

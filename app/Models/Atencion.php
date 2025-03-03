@@ -32,6 +32,6 @@ class Atencion extends Model
 
     public function cliente()
     {
-        return $this->hasOne(User::class, 'id_cliente', 'id');
+        return $this->hasOne(Cliente::class, 'id_cliente', 'id');
     }
 }

@@ -19,4 +19,8 @@ class Servicio extends Model
         'descripcion',
         'costo_base',
     ];
+
+    protected $casts = [
+        'costo_base' => 'decimal:2',
+    ];
 }

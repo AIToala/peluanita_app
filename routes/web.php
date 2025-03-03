@@ -36,9 +36,18 @@ Route::middleware('auth', 'verified', 'check.role:admin')->group(function () {
     Route::get('/admin/roles', function () {
         return Inertia::render('Admin/Roles');
     })->name('admin.roles');
+    Route::get('/dashboard/empleados/crear', function () {
+        return Inertia::render('Dashboard/Empleados/CrearEmpleado');
+    })->name('dashboard.empleados.crear');
+    Route::get('/dashboard/empleados/{id}', function () {
+        return Inertia::render('Dashboard/Empleados/EditarEmpleado');
+    })->name('dashboard.empleados.editar');
+    Route::get('/dashboard/empleados/{id}/eliminar', function () {
+        return Inertia::render('Dashboard/Empleados/EliminarEmpleado');
+    })->name('dashboard.empleados.eliminar');
 });
 
-Route::middleware('auth', 'verified', 'check.role:empleado|admin')->group(function () {
+Route::middleware('auth', 'verified', 'check.role:admin')->group(function () {
     Route::get('/dashboard/empleados', function () {
         return Inertia::render('Dashboard/Empleados/GestionarEmpleados');
     })->name('dashboard.empleados');

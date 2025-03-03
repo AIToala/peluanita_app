@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@peluanita.com',
             'password' => bcrypt('peluanitaadmin'),
             'username' => 'admin',
+            'role' => 'admin',
             'estado' => 1,
             'email_verified_at' => now(),            
         ])->assignRole('admin');

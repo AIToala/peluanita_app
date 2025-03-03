@@ -51,7 +51,7 @@ const breadcrumbs = computed(() => {
         <AppSidebar />
         <SidebarInset>
             <header
-                class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12"
+                class="flex h-16 shrink-0 items-center gap-2 shadow-sm transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 dark:bg-gray-900 dark:text-neutral-50 dark:shadow-none"
             >
                 <div class="flex items-center gap-2 px-4">
                     <SidebarTrigger class="-ml-1" />
@@ -83,14 +83,16 @@ const breadcrumbs = computed(() => {
                     </Breadcrumb>
                 </div>
             </header>
-            <div class="w-[100vw] overflow-x-auto p-4">
+            <div
+                class="flex min-h-screen w-auto max-w-[100vw] bg-white sm:justify-center dark:bg-gray-900"
+            >
                 <template v-if="!$slots.content">
                     <div
-                        class="flex w-full flex-col items-center justify-center gap-4 font-serif"
+                        class="flex w-full flex-col items-center justify-center gap-4 p-4 font-serif"
                     >
                         <Logo logoSrc="footer" classNames="h-full w-64" />
                         <h2
-                            class="text-2xl font-semibold text-gray-900 dark:text-white"
+                            class="text-2xl font-semibold text-gray-900 dark:text-neutral-50"
                         >
                             Bienvenido, {{ userAuth.name }}
                         </h2>

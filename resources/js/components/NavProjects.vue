@@ -81,8 +81,12 @@ const { isMobile } = useSidebar();
                 </DropdownMenu>
             </SidebarMenuItem>
             <SidebarMenuItem>
-                <SidebarMenuButton class="text-sidebar-foreground/70">
-                    <MoreHorizontal class="text-sidebar-foreground/70" />
+                <SidebarMenuButton
+                    class="text-[#40404a] dark:text-neutral-50/70"
+                >
+                    <MoreHorizontal
+                        class="text-[#40404a] dark:text-neutral-50/70"
+                    />
                     <span>More</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>

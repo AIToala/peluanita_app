@@ -1,14 +1,24 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head } from '@inertiajs/vue3';
 
 defineProps<{
     mustVerifyEmail?: boolean;
     status?: string;
 }>();
+
+const userAuth = computed(() => {
+    console.log(usePage().props.auth.user);
+    return {
+        name: usePage().props.auth.user.name,
+        email: usePage().props.auth.user.email,
+        role: usePage().props.auth.user.role[0],
+    };
+});
 </script>
 
 <template>
@@ -19,7 +29,7 @@ defineProps<{
             <h2
                 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
             >
-                Profile
+                Perfil
             </h2>
         </template>
 
@@ -40,8 +50,8 @@ defineProps<{
                 >
                     <UpdatePasswordForm class="max-w-xl" />
                 </div>
-
                 <div
+                    v-if="userAuth.role !== 'admin'"
                     class="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800"
                 >
                     <DeleteUserForm class="max-w-xl" />

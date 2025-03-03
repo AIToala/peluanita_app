@@ -3,7 +3,7 @@
         <img :src="logoSource" :alt="altText" :class="classNames" />
         <span
             v-if="showText"
-            class="font-regular font-serif text-xl italic text-gray-900 dark:text-white"
+            class="font-regular font-serif text-xl italic text-gray-900 dark:text-neutral-50"
         >
             {{ brandSlogan }}
         </span>

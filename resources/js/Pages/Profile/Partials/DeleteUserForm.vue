@@ -44,36 +44,38 @@ const closeModal = () => {
     <section class="space-y-6">
         <header>
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Delete Account
+                Borrar Cuenta
             </h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Once your account is deleted, all of its resources and data will
-                be permanently deleted. Before deleting your account, please
-                download any data or information that you wish to retain.
+                Una vez que se elimine su cuenta, todos sus recursos y datos se
+                eliminarán permanentemente. Antes de eliminar su cuenta, por
+                favor descargue cualquier dato o información que desee
+                conservar.
             </p>
         </header>
 
-        <DangerButton @click="confirmUserDeletion">Delete Account</DangerButton>
+        <DangerButton @click="confirmUserDeletion">Borrar Cuenta</DangerButton>
 
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
                 <h2
                     class="text-lg font-medium text-gray-900 dark:text-gray-100"
                 >
-                    Are you sure you want to delete your account?
+                    ¿Está seguro de que desea eliminar su cuenta?
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Once your account is deleted, all of its resources and data
-                    will be permanently deleted. Please enter your password to
-                    confirm you would like to permanently delete your account.
+                    Una vez que se elimine su cuenta, todos sus recursos y datos
+                    se eliminarán permanentemente. Por favor, ingrese su
+                    contraseña para confirmar que desea eliminar su cuenta de
+                    forma permanente.
                 </p>
 
                 <div class="mt-6">
                     <InputLabel
                         for="password"
-                        value="Password"
+                        value="Contraseña"
                         class="sr-only"
                     />
 
@@ -83,7 +85,7 @@ const closeModal = () => {
                         v-model="form.password"
                         type="password"
                         class="mt-1 block w-3/4"
-                        placeholder="Password"
+                        placeholder="Contraseña"
                         @keyup.enter="deleteUser"
                     />
 
@@ -92,7 +94,7 @@ const closeModal = () => {
 
                 <div class="mt-6 flex justify-end">
                     <SecondaryButton @click="closeModal">
-                        Cancel
+                        Cancelar
                     </SecondaryButton>
 
                     <DangerButton
@@ -101,7 +103,7 @@ const closeModal = () => {
                         :disabled="form.processing"
                         @click="deleteUser"
                     >
-                        Delete Account
+                        Borrar Cuenta
                     </DangerButton>
                 </div>
             </div>

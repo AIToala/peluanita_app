@@ -1,17 +1,103 @@
 import type { ColumnDef } from '@tanstack/vue-table';
 import type { Task } from './UsuarioSchema';
 
-import { Button } from '@/components/ui/button';
-import { h } from 'vue';
+import { useEmpleadoStore } from '@/store/empleados';
+import { router } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
+import { h, nextTick } from 'vue';
 import DataTableColumnHeader from '../DataTableColumnHeader.vue';
 import { estados } from './data';
+
+export const desactivar = async (
+    id: string,
+    empleadoStore: ReturnType<typeof useEmpleadoStore>,
+) => {
+    await Swal.fire({
+        title: '¿Esta seguro de eliminar este empleado?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar',
+    }).then(async (result: { isConfirmed: any }) => {
+        if (result.isConfirmed) {
+            await nextTick();
+            await empleadoStore
+                .deleteEmpleado(parseInt(id))
+                .then(async () => {
+                    await Swal.fire({
+                        title: 'Empleado eliminado con éxito',
+                        icon: 'success',
+                        showConfirmButton: true,
+                    }).then(() => {
+                        router.get(route('dashboard.empleados'));
+                    });
+                })
+                .catch(async (error) => {
+                    await Swal.fire({
+                        title: 'Error al eliminar al empleado',
+                        text: error.message,
+                        icon: 'error',
+                        showConfirmButton: true,
+                    }).then((result: { isConfirmed: any }) => {
+                        if (result.isConfirmed) {
+                            console.error(error);
+                        }
+                    });
+                });
+        }
+    });
+};
+
+export const activar = async (
+    id: string,
+    empleadoStore: ReturnType<typeof useEmpleadoStore>,
+) => {
+    await Swal.fire({
+        title: '¿Esta seguro de activar este empleado?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar',
+    }).then(async (result: { isConfirmed: any }) => {
+        if (result.isConfirmed) {
+            await nextTick();
+            await empleadoStore
+                .activarEmpleado(parseInt(id))
+                .then(async () => {
+                    await Swal.fire({
+                        title: 'Empleado activado con éxito',
+                        icon: 'success',
+                        showConfirmButton: true,
+                    }).then(() => {
+                        router.get(route('dashboard.empleados'));
+                    });
+                })
+                .catch(async (error) => {
+                    await Swal.fire({
+                        title: 'Error al activar al empleado',
+                        text: error.message,
+                        icon: 'error',
+                        showConfirmButton: true,
+                    }).then((result: { isConfirmed: any }) => {
+                        if (result.isConfirmed) {
+                            console.error(error);
+                        }
+                    });
+                });
+        }
+    });
+};
 
 export const UsuarioColumns: ColumnDef<Task>[] = [
     {
         accessorKey: 'id',
         header: ({ column }) =>
             h(DataTableColumnHeader, { column, title: 'Id' }),
-        cell: ({ row }) => h('div', { class: 'w-[20%]' }, row.getValue('id')),
+        cell: ({ row }) => h('div', { class: 'w-full' }, row.getValue('id')),
         enableSorting: false,
         enableHiding: false,
     },
@@ -21,20 +107,20 @@ export const UsuarioColumns: ColumnDef<Task>[] = [
             h(DataTableColumnHeader, { column, title: 'Nombre' }),
 
         cell: ({ row }) => {
-            return h('div', { class: 'w-[20%]' }, row.getValue('name'));
+            return h('div', { class: 'w-full' }, row.getValue('name'));
         },
     },
     {
         accessorKey: 'email',
         header: ({ column }) =>
             h(DataTableColumnHeader, {
-                class: 'w-[20%]',
+                class: 'w-full',
                 column,
                 title: 'Email',
             }),
 
         cell: ({ row }) => {
-            return h('div', { class: 'w-[20%]' }, row.getValue('email'));
+            return h('div', { class: 'w-full' }, row.getValue('email'));
         },
     },
     {
@@ -48,10 +134,10 @@ export const UsuarioColumns: ColumnDef<Task>[] = [
 
             if (!status) return null;
 
-            return h('div', { class: 'flex w-[20%] items-center' }, [
+            return h('div', { class: 'flex w-full items-center' }, [
                 status.icon &&
                     h(status.icon, {
-                        class: `mr-2 h-4 w-4`,
+                        class: `mr-2 h-6 w-8 text-${estado == 'activo' ? 'green' : 'gray'}-600 rounded-full border-none}`,
                     }),
                 h('span', status.label),
             ]);
@@ -62,15 +148,7 @@ export const UsuarioColumns: ColumnDef<Task>[] = [
     },
     {
         id: 'actions',
-        header: () => h('div', { class: 'w-[20%]' }, 'Acciones'),
-        cell: ({ row }) =>
-            h('div', { class: 'flex w-[20%] items-center gap-2' }, [
-                h(Button, {}, { default: () => 'Editar' }),
-                h(
-                    Button,
-                    { variant: 'destructive' },
-                    { default: () => 'Eliminar' },
-                ),
-            ]),
+        header: () => h('div', { class: 'w-full' }, 'Acciones'),
+        cell: () => {},
     },
 ];

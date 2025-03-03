@@ -66,7 +66,7 @@ defineProps<DataTablePaginationProps>();
             <div class="flex items-center space-x-2">
                 <Button
                     variant="outline"
-                    class="hidden h-8 w-8 p-0 lg:flex"
+                    class="hidden h-8 w-8 !bg-white p-0 lg:flex"
                     :disabled="!table.getCanPreviousPage()"
                     @click="table.setPageIndex(0)"
                 >
@@ -75,7 +75,7 @@ defineProps<DataTablePaginationProps>();
                 </Button>
                 <Button
                     variant="outline"
-                    class="h-8 w-8 p-0"
+                    class="h-8 w-8 !bg-white p-0"
                     :disabled="!table.getCanPreviousPage()"
                     @click="table.previousPage()"
                 >
@@ -84,7 +84,7 @@ defineProps<DataTablePaginationProps>();
                 </Button>
                 <Button
                     variant="outline"
-                    class="h-8 w-8 p-0"
+                    class="h-8 w-8 !bg-white p-0"
                     :disabled="!table.getCanNextPage()"
                     @click="table.nextPage()"
                 >
@@ -93,7 +93,7 @@ defineProps<DataTablePaginationProps>();
                 </Button>
                 <Button
                     variant="outline"
-                    class="hidden h-8 w-8 p-0 lg:flex"
+                    class="hidden h-8 w-8 !bg-white p-0 lg:flex"
                     :disabled="!table.getCanNextPage()"
                     @click="table.setPageIndex(table.getPageCount() - 1)"
                 >

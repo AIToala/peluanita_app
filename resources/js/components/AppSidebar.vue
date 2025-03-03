@@ -35,8 +35,16 @@ const userAuth = computed(() => {
     };
 });
 
+const nav = computed(() => {
+    return userAuth.value.role === 'admin'
+        ? data.navAdmin
+        : userAuth.value.role === 'empleado'
+          ? data.navEmpleados
+          : data.navCliente;
+});
+
 const data = {
-    navMain: [
+    navAdmin: [
         {
             title: 'Empleados',
             url: '#',
@@ -45,7 +53,7 @@ const data = {
             items: [
                 {
                     title: 'Crear Empleado',
-                    url: '#',
+                    url: route('dashboard.empleados.crear'),
                 },
                 {
                     title: 'Manejar Empleados',
@@ -118,6 +126,78 @@ const data = {
             ],
         },
     ],
+    navEmpleados: [
+        {
+            title: 'Clientes',
+            url: '#',
+            icon: UsersRound,
+            items: [
+                {
+                    title: 'Crear Cliente',
+                    url: '#',
+                },
+                {
+                    title: 'Manejar Clientes',
+                    url: '#',
+                },
+            ],
+        },
+        {
+            title: 'Citas',
+            url: '#',
+            icon: BookUser,
+            items: [
+                {
+                    title: 'Agendar Cita',
+                    url: '#',
+                },
+                {
+                    title: 'Manejar Citas',
+                    url: '#',
+                },
+                {
+                    title: 'Atenciones Realizadas',
+                    url: '#',
+                },
+            ],
+        },
+        {
+            title: 'Reportes',
+            url: '#',
+            icon: BookOpen,
+            items: [
+                {
+                    title: 'Reporte de Citas',
+                    url: '#',
+                },
+                {
+                    title: 'Reporte de Atenciones',
+                    url: '#',
+                },
+            ],
+        },
+    ],
+    navCliente: [
+        {
+            title: 'Citas',
+            url: '#',
+            icon: BookUser,
+            items: [
+                {
+                    title: 'Agendar Cita',
+                    url: '#',
+                },
+                {
+                    title: 'Manejar Citas',
+                    url: '#',
+                },
+                {
+                    title: 'Atenciones Realizadas',
+                    url: '#',
+                },
+            ],
+        },
+    ],
 };
 </script>
 
@@ -131,7 +211,7 @@ const data = {
             </h1>
         </SidebarHeader>
         <SidebarContent>
-            <NavMain :items="data.navMain" />
+            <NavMain :items="nav" />
         </SidebarContent>
         <SidebarFooter>
             <NavUser :user="userAuth" />

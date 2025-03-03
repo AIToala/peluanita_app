@@ -29,4 +29,7 @@
         "resources/js/**/**/**/*.ts",
         "resources/js/**/**/**/*.vue"
     ],
+    "types": [
+        "vue-sweetalert2"
+    ]
 }

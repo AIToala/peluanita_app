@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('id_servicio');
             $table->dateTime('fecha_hora');
             $table->decimal('costo_final', 8, 2);
+            $table->unique(['id_cita', 'id_servicio']);
             $table->timestamps();
         });
     }

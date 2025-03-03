@@ -1,8 +1,10 @@
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createPinia } from 'pinia';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import { createApp, DefineComponent, h } from 'vue';
 import { createI18n } from 'vue-i18n';
+import VueSweetalert2 from 'vue-sweetalert2';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import '../css/app.css';
 import './bootstrap';
@@ -19,7 +21,7 @@ const messages = Object.fromEntries(
 const i18n = createI18n({
     legacy: false,
     locale: localStorage.getItem('locale') || 'es',
-    fallbackLocale: 'en',
+    fallbackLocale: 'es',
     messages,
 });
 
@@ -39,6 +41,7 @@ createInertiaApp({
             .use(ZiggyVue)
             .use(pinia)
             .use(i18n)
+            .use(VueSweetalert2)
             .mount(el);
     },
     progress: {
