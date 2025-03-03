@@ -24,7 +24,7 @@ class IndexUserRequest extends FormRequest
         return [
             'id_usuario' => 'sometimes|integer|nullable',
             'name' => 'sometimes|string|nullable',
-            'email' => 'sometimes|email|nullable',
+            'email' => 'sometimes|string|nullable',
             'role' => 'sometimes|string|nullable',
             'paginated' => 'sometimes|boolean',
             'per_page' => 'sometimes|integer|min:5|max:100|exclude_if:paginated,false',

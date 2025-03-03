@@ -62,7 +62,7 @@ ClienteColumns.forEach((column) => {
             h(
                 'div',
                 { class: 'flex w-[20%] items-center gap-2' },
-                row.getValue('estado') == 0
+                row.original.usuario?.estado === 0
                     ? [
                           h(
                               Button,
@@ -145,6 +145,7 @@ const loadClientes = async (
                 paginated: 1,
                 ...payload.data,
                 ...payload.pagination,
+                with_usuario: 1,
             })
             .catch(async (error) => {
                 await Swal.fire({
@@ -200,6 +201,16 @@ onMounted(() => {
                             @keydown.enter="updateSearchQuery"
                         />
                     </div>
+                    <div class="col-span-1 flex flex-col gap-2">
+                        <Label for="email">Email</Label>
+                        <Input
+                            id="email"
+                            type="text"
+                            placeholder="Buscar por email..."
+                            class="pl-2"
+                            @keydown.enter="updateSearchQuery"
+                        />
+                    </div>
                 </div>
                 <div
                     class="flex w-full items-center justify-center gap-4 sm:justify-end"
@@ -208,7 +219,7 @@ onMounted(() => {
                         class="w-full bg-green-500 text-white hover:bg-green-500/80 sm:w-fit"
                         as-child
                     >
-                        <Link :href="route('dashboard.servicios.crear')"
+                        <Link :href="route('dashboard.clientes.crear')"
                             >Nuevo Cliente</Link
                         >
                     </Button>

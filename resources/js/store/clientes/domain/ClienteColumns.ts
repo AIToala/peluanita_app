@@ -110,7 +110,7 @@ export const ClienteColumns: ColumnDef<Cliente>[] = [
             return h(
                 'div',
                 { class: 'w-full' },
-                row.getValue('nombre') + ' ' + row.getValue('apellido'),
+                row.getValue('nombre') + ' ' + row.original?.apellido,
             );
         },
     },
@@ -160,7 +160,8 @@ export const ClienteColumns: ColumnDef<Cliente>[] = [
             h(DataTableColumnHeader, { column, title: 'Estado' }),
 
         cell: ({ row }) => {
-            const estado = row.getValue('estado') == 1 ? 'activo' : 'inactivo';
+            const estado =
+                row.original.usuario?.estado === 1 ? 'activo' : 'inactivo';
             const status = estados.find((status) => status.value === estado);
 
             if (!status) return null;

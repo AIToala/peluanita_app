@@ -9,6 +9,10 @@ export const clienteSchema = z.object({
     email: z.string(),
     telefono: z.string(),
     direccion: z.string(),
+    estado: z.string(),
+    usuario: z.object({
+        estado: z.number(),
+    }),
 });
 
 export type Cliente = z.infer<typeof clienteSchema>;

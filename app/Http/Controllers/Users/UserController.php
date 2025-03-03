@@ -62,10 +62,10 @@ class UserController extends AuthDataController
                 throw new \Exception('El email ya está registrado');
             }
             $user = User::create([
-                'name' => $request->name,
+                'name' => mb_strtolower($request->name, 'UTF-8'),
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'username' => substr(explode(' ', trim($request->name))[0], 0, 14),
+                'username' => mb_strtolower(str_replace(' ', '_', substr(trim($request->name), 0, 14)), 'UTF-8'),
                 'role' => $request->role,
             ]);
             
@@ -96,9 +96,9 @@ class UserController extends AuthDataController
         ]);
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Error al actualizar el usuario',
-                'error' => $validator->errors()
-            ], 422);
+                    'message' => 'Error al crear el cliente',
+                    'error' => $validator->errors()->all()
+                ], 422);
         }
         try {
             \DB::beginTransaction();
@@ -113,7 +113,7 @@ class UserController extends AuthDataController
             if ($userWithSameEmail) {
                 throw new \Exception('El email ya está registrado');
             }
-            $user->name = $request->name;
+            $user->name = mb_strtolower($request->name, 'UTF-8');
             $user->email = $request->email;
             if ($user->isDirty('email')) {
                 $user->email_verified_at = null;
@@ -121,7 +121,7 @@ class UserController extends AuthDataController
             if (!empty($request->password)){
                 $user->password = Hash::make($request->password);
             }
-            $user->username = substr(explode(' ', trim($request->name))[0], 0, 14);
+            $user->username = mb_strtolower(str_replace(' ', '_', substr(trim($user->name), 0, 14)), 'UTF-8');
             $user->save();
             \DB::commit();
             return response()->json([

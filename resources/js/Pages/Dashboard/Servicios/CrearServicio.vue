@@ -71,19 +71,16 @@ const submit = async () => {
                     });
                 })
                 .catch(async (error) => {
-                    const e: any =
-                        error.error && typeof error.error === 'object'
-                            ? Object.values(error.error)
-                            : [];
-                    if (Array.isArray(e)) {
-                        e.forEach((element: any) => {
+                    let err: any = error.error;
+                    if (Array.isArray(err)) {
+                        err.forEach((element: any) => {
                             form.setError(element[0], element[1]);
                         });
+                        err = err.join(', ');
                     }
-                    const err = e.length > 1 ? e[0].toString() : e.join(', ');
                     await Swal.fire({
                         title: 'Error al crear el servicio',
-                        text: err ?? '',
+                        text: err ?? error.message ?? '',
                         icon: 'error',
                         showConfirmButton: true,
                     }).then((result: { isConfirmed: any }) => {
@@ -103,7 +100,7 @@ const submit = async () => {
             <div
                 class="h-full w-auto max-w-[100vw] flex-1 flex-col space-y-8 bg-white p-8"
             >
-                <h1 class="text-2xl font-semibold text-gray-900">
+                <h1 class="font-serif text-2xl font-semibold text-gray-900">
                     Registrar Nuevo Servicio
                 </h1>
                 <form

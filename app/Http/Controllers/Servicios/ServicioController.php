@@ -23,7 +23,10 @@ class ServicioController extends AuthDataController
             'per_page' => 'sometimes|integer|min:5|max:100|exclude_if:paginated,false',
         ]);
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                    'message' => 'Error al crear el cliente',
+                    'error' => $validator->errors()->all()
+                ], 422);
         }
         try {
             $result = Servicio::
@@ -59,10 +62,17 @@ class ServicioController extends AuthDataController
             'costo_base' => 'required|decimal:2|between:0,9999.99',
         ]);
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                    'message' => 'Error al crear el cliente',
+                    'error' => $validator->errors()->all()
+                ], 422);
         }
         try {
             \DB::beginTransaction();
+            $servicioExists = Servicio::where('nombre', mb_strtoupper($request->nombre, 'UTF-8'))->first();
+            if ($servicioExists) {
+                return response()->json(['message' => 'El servicio ya existe', 'error' => 'Ya existe un servicio con este nombre'], 409);
+            }
             $servicio = new Servicio();
             $servicio->nombre = mb_strtoupper($request->nombre, 'UTF-8');
             $servicio->descripcion = $request->descripcion;
@@ -92,7 +102,10 @@ class ServicioController extends AuthDataController
             'costo_base' => 'sometimes|decimal:2|between:0,9999.99',
         ]);
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                    'message' => 'Error al crear el cliente',
+                    'error' => $validator->errors()->all()
+                ], 422);
         }
         try {
             \DB::beginTransaction();

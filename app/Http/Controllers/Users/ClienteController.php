@@ -22,7 +22,7 @@ class ClienteController extends AuthDataController
             'id_usuario' => 'sometimes|integer|nullable',
             'nombre' => 'sometimes|string|nullable',
             'apellido' => 'sometimes|string|nullable',
-            'email' => 'sometimes|email|nullable',
+            'email' => 'sometimes|string|nullable',
             'telefono' => 'sometimes|string|nullable',
             'direccion' => 'sometimes|string|nullable',
             'estado' => 'sometimes|boolean',
@@ -31,7 +31,10 @@ class ClienteController extends AuthDataController
             'per_page' => 'sometimes|integer|min:5|max:100|exclude_if:paginated,false',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                    'message' => 'Error al crear el cliente',
+                    'error' => $validator->errors()->all()
+                ], 422);
         }
         try {
             $result = Cliente::
@@ -51,7 +54,11 @@ class ClienteController extends AuthDataController
                     fn ($q) => $q->get(),
                 );
             $result->makeHidden(['created_at', 'updated_at', 'email_verified_at', 'password']);
-            \Log::info($result);
+            if ($request->boolean('with_usuario')) {
+                $result->each(function ($cliente) {
+                    $cliente->usuario->makeHidden(['created_at', 'updated_at', 'email_verified_at', 'email','name', 'role', 'username']);
+                });
+            }
             return response()->json($result, 200);
         } catch (\Throwable $th) {
             LogUtils::error($th);
@@ -75,7 +82,10 @@ class ClienteController extends AuthDataController
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                    'message' => 'Error al crear el cliente',
+                    'error' => $validator->errors()->all()
+                ], 422);
         }
         try {
             \DB::beginTransaction();
@@ -89,17 +99,18 @@ class ClienteController extends AuthDataController
                 throw new \Exception('El email ya está registrado');
             }
             $user = User::create([
-                'name' => $request->nombre . ' ' . $request->apellido,
+                'name' => mb_strtolower($request->nombre . ' ' . $request->apellido, 'UTF-8'),
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'username' => substr(explode(' ', trim($request->nombre))[0], 0, 14),
+                'username' => mb_strtolower(str_replace(' ', '_', substr(trim($request->name), 0, 14)), 'UTF-8'),
                 'role' => 'cliente',
+                'estado' => 1,
             ]);
             $user->assignRole('cliente');
             $cliente = Cliente::create([
-                'nombre' => $request->nombre,
-                'apellido' => $request->apellido,
-                'email' => $user->email,
+                'nombre' => mb_strtolower($request->nombre, 'UTF-8'),
+                'apellido' => mb_strtolower($request->apellido, 'UTF-8'),
+                'email' => $user->email, 'UTF-8',
                 'telefono' => $request->telefono,
                 'direccion' => $request->direccion,
                 'id_usuario' => $user->id,
@@ -131,34 +142,38 @@ class ClienteController extends AuthDataController
         ]);
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Error al actualizar el cliente',
-                'error' => $validator->errors()
-            ], 422);
+                    'message' => 'Error al crear el cliente',
+                    'error' => $validator->errors()->all()
+                ], 422);
         }
+        \Log::info($request->all());
         try {
             \DB::beginTransaction();
             $cliente = Cliente::find($request->id);
             if (!$cliente) {
                 throw new \Exception('Cliente no encontrado');
             }
-            $userWithSameEmail = User::where('email', $request->email)->where('id', '!=', $request->id)->first();
-            if ($userWithSameEmail) {
-                throw new \Exception('El email ya está registrado');
-            }
             $user = User::find($cliente->id_usuario);
             if (!$user) {
                 Auth::logout();
                 throw new \Exception('Usuario no encontrado');                
+            }
+            $userWithSameEmail = User::where('email', $request->email)->where('id', '!=', $user->id)->first();
+            if ($userWithSameEmail) {
+                \Log::info($userWithSameEmail);
+                throw new \Exception('El email ya está registrado');
             }
             $cliente->nombre = $request->has('nombre') ? $request->nombre : $cliente->nombre;
             $cliente->apellido = $request->has('apellido') ? $request->apellido : $cliente->apellido;
             $cliente->email = $request->has('email') ? $request->email : $cliente->email;
             $cliente->telefono = $request->has('telefono') ? $request->telefono : $cliente->telefono;
             $cliente->direccion = $request->has('direccion') ? $request->direccion : $cliente->direccion;
+            $cliente->nombre = mb_strtolower($cliente->nombre, 'UTF-8');
+            $cliente->apellido = mb_strtolower($cliente->apellido, 'UTF-8');
             $cliente->save();
             $user->name = $cliente->nombre . ' ' . $cliente->apellido;
             $user->email = $cliente->email;
-            $user->username = substr(explode(' ', trim($cliente->nombre))[0], 0, 14);
+            $user->username = mb_strtolower(str_replace(' ', '_', substr(trim($user->name), 0, 14)), 'UTF-8');
             $user->save();
             \DB::commit();
             return response()->json($cliente, 200);
