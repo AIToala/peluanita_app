@@ -16,6 +16,7 @@ class Atencion extends Model
     protected $fillable = [
         'id_servicio',
         'id_cliente',
+        'id_empleado',
         'fecha_hora',
         'costo_final',
     ];
@@ -32,5 +33,10 @@ class Atencion extends Model
     public function cliente()
     {
         return $this->hasOne(Cliente::class, 'id_cliente', 'id');
+    }
+
+    public function empleado()
+    {
+        return $this->hasOne(User::class, 'id_empleado', 'id');
     }
 }

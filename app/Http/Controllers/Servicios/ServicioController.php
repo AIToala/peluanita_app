@@ -69,6 +69,9 @@ class ServicioController extends AuthDataController
         }
         try {
             \DB::beginTransaction();
+            if (!Auth::user() || !Auth::user()->hasRole(['admin'])) {
+                throw new \Exception('No tienes permisos para crear este usuario');
+            }
             $servicioExists = Servicio::where('nombre', mb_strtoupper($request->nombre, 'UTF-8'))->first();
             if ($servicioExists) {
                 return response()->json(['message' => 'El servicio ya existe', 'error' => 'Ya existe un servicio con este nombre'], 409);
@@ -109,6 +112,9 @@ class ServicioController extends AuthDataController
         }
         try {
             \DB::beginTransaction();
+            if (!Auth::user() || !Auth::user()->hasRole(['admin'])) {
+                throw new \Exception('No tienes permisos para crear este usuario');
+            }
             $servicio = Servicio::find($request->id);
             if (!$servicio) {
                 return response()->json(['message' => 'Servicio no encontrado'], 404);
@@ -136,6 +142,9 @@ class ServicioController extends AuthDataController
     {
         try {
             \DB::beginTransaction();
+            if (!Auth::user() || !Auth::user()->hasRole(['admin'])) {
+                throw new \Exception('No tienes permisos para crear este usuario');
+            }
             $servicio = Servicio::find($id_servicio);
             if (!$servicio) {
                 return response()->json(['message' => 'Servicio no encontrado'], 404);
@@ -161,6 +170,9 @@ class ServicioController extends AuthDataController
     {
         try {
             \DB::beginTransaction();
+            if (!Auth::user() || !Auth::user()->hasRole(['admin'])) {
+                throw new \Exception('No tienes permisos para crear este usuario');
+            }
             $servicio = Servicio::find($id_servicio);
             if (!$servicio) {
                 return response()->json(['message' => 'Servicio no encontrado'], 404);

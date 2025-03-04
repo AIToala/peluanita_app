@@ -61,7 +61,7 @@ ClienteColumns.forEach((column) => {
         column.cell = ({ row }) =>
             h(
                 'div',
-                { class: 'flex w-[20%] items-center gap-2' },
+                { class: 'flex items-center gap-2' },
                 row.original.usuario?.estado === 0
                     ? [
                           h(
@@ -178,7 +178,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <Dashboard>
+    <Dashboard title="Gestionar Clientes">
         <template #content>
             <div
                 class="h-full w-auto max-w-[100vw] flex-1 flex-col space-y-8 bg-white p-8"
@@ -207,6 +207,16 @@ onMounted(() => {
                             id="email"
                             type="text"
                             placeholder="Buscar por email..."
+                            class="pl-2"
+                            @keydown.enter="updateSearchQuery"
+                        />
+                    </div>
+                    <div class="col-span-1 flex flex-col gap-2">
+                        <Label for="email">Contacto</Label>
+                        <Input
+                            id="telefono"
+                            type="text"
+                            placeholder="Buscar por telefono..."
                             class="pl-2"
                             @keydown.enter="updateSearchQuery"
                         />

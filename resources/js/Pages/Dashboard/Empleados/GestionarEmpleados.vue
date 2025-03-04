@@ -57,7 +57,7 @@ EmpleadoColumns.forEach((column) => {
         column.cell = ({ row }) =>
             h(
                 'div',
-                { class: 'flex w-[20%] items-center gap-2' },
+                { class: 'flex items-center gap-2' },
                 row.getValue('estado') == 0
                     ? [
                           h(
@@ -177,7 +177,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <Dashboard>
+    <Dashboard title="Gestionar Empleados">
         <template #content>
             <div
                 class="h-full w-auto max-w-[100vw] flex-1 flex-col space-y-8 bg-white p-8"

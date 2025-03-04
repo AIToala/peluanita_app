@@ -118,7 +118,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <Dashboard>
+    <Dashboard title="Editar Cliente">
         <template #content>
             <div
                 class="h-full w-auto max-w-[100vw] flex-1 flex-col space-y-8 bg-white p-8"

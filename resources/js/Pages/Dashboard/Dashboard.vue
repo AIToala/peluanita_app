@@ -23,6 +23,22 @@ import {
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
+interface DashboardProps {
+    title: string;
+    sidebarOpen: boolean;
+}
+
+const props = defineProps({
+    title: {
+        type: String,
+        default: 'Dashboard',
+    },
+    sidebarOpen: {
+        type: Boolean,
+        default: true,
+    },
+}) as DashboardProps;
+
 const userAuth = computed(() => {
     return usePage().props.auth.user;
 });
@@ -31,7 +47,7 @@ const breadcrumbTitles: Record<string, string> = {
     Dashboard: 'Dashboard',
     Admin: 'Admin Panel',
     Clientes: 'Clientes',
-    Emppleados: 'Empleados',
+    Empleados: 'Empleados',
 };
 const breadcrumbs = computed(() => {
     const segments = page.url.split('/').filter(Boolean); // Split URL into parts
@@ -46,8 +62,8 @@ const breadcrumbs = computed(() => {
 </script>
 
 <template>
-    <Head title="Dashboard" />
-    <SidebarProvider>
+    <Head :title="props.title" />
+    <SidebarProvider :defaultOpen="props.sidebarOpen">
         <AppSidebar />
         <SidebarInset>
             <header
@@ -84,7 +100,7 @@ const breadcrumbs = computed(() => {
                 </div>
             </header>
             <div
-                class="flex min-h-screen w-auto max-w-[100vw] bg-white sm:justify-center dark:bg-gray-900"
+                class="flex min-h-[80vh] w-auto max-w-[100vw] bg-white sm:justify-center dark:bg-gray-900"
             >
                 <template v-if="!$slots.content">
                     <div

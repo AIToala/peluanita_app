@@ -136,7 +136,7 @@ export const ServicioColumns: ColumnDef<Servicio>[] = [
             return h(
                 'div',
                 { class: 'w-full text-right' },
-                parseFloat(row.getValue('costo_base')).toFixed(2),
+                '$ ' + parseFloat(row.getValue('costo_base')).toFixed(2),
             );
         },
         enableSorting: true,

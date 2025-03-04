@@ -37,7 +37,7 @@ const userAuth = computed(() => {
 
 const nav = computed(() => {
     return userAuth.value.role === 'admin'
-        ? data.navAdmin
+        ? [...data.navAdmin, ...data.navEmpleados]
         : userAuth.value.role === 'empleado'
           ? data.navEmpleados
           : data.navCliente;
@@ -62,6 +62,23 @@ const data = {
             ],
         },
         {
+            title: 'Servicios',
+            url: '#',
+            icon: Settings2,
+            items: [
+                {
+                    title: 'Crear Servicio',
+                    url: route('dashboard.servicios.crear'),
+                },
+                {
+                    title: 'Manejar Servicios',
+                    url: route('dashboard.servicios'),
+                },
+            ],
+        },
+    ],
+    navEmpleados: [
+        {
             title: 'Clientes',
             url: '#',
             icon: UsersRound,
@@ -83,77 +100,11 @@ const data = {
             items: [
                 {
                     title: 'Agendar Cita',
-                    url: '#',
+                    url: route('dashboard.citas.crear'),
                 },
                 {
                     title: 'Manejar Citas',
-                    url: '#',
-                },
-                {
-                    title: 'Atenciones Realizadas',
-                    url: '#',
-                },
-            ],
-        },
-        {
-            title: 'Servicios',
-            url: '#',
-            icon: Settings2,
-            items: [
-                {
-                    title: 'Crear Servicio',
-                    url: route('dashboard.servicios.crear'),
-                },
-                {
-                    title: 'Manejar Servicios',
-                    url: route('dashboard.servicios'),
-                },
-            ],
-        },
-        {
-            title: 'Reportes',
-            url: '#',
-            icon: BookOpen,
-            items: [
-                {
-                    title: 'Reporte de Citas',
-                    url: '#',
-                },
-                {
-                    title: 'Reporte de Atenciones',
-                    url: '#',
-                },
-            ],
-        },
-    ],
-    navEmpleados: [
-        {
-            title: 'Clientes',
-            url: '#',
-            icon: UsersRound,
-            items: [
-                {
-                    title: 'Crear Cliente',
-                    url: '#',
-                },
-                {
-                    title: 'Manejar Clientes',
-                    url: '#',
-                },
-            ],
-        },
-        {
-            title: 'Citas',
-            url: '#',
-            icon: BookUser,
-            items: [
-                {
-                    title: 'Agendar Cita',
-                    url: '#',
-                },
-                {
-                    title: 'Manejar Citas',
-                    url: '#',
+                    url: route('dashboard.citas'),
                 },
                 {
                     title: 'Atenciones Realizadas',

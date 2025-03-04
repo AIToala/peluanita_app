@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->integer('id_cita');
             $table->integer('id_servicio');
+            $table->integer('id_empleado');
             $table->dateTime('fecha_hora');
             $table->decimal('costo_final', 8, 2);
-            $table->unique(['id_cita', 'id_servicio']);
+            $table->unique(['id_cita', 'id_servicio', 'id_empleado']);
             $table->timestamps();
         });
     }

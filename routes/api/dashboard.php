@@ -2,6 +2,7 @@
 use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Servicios\ServicioController;
 use App\Http\Controllers\Users\ClienteController;
+use App\Http\Controllers\Agendas\CitaController;
 use Illuminate\Support\Facades\Route;
 
 // Rutas para usuarios
@@ -34,3 +35,12 @@ Route::group(['prefix' => 'clientes', 'middleware' => 'check.role:admin|empleado
 Route::group(['prefix' => 'clientes', 'middleware' => 'check.role:admin|empleado|cliente', 'controller' => ClienteController::class], function (): void {
     Route::post('crear', 'store')->name('clientes.store');
 })->name('clientes');
+
+Route::group(['prefix'=> 'agendas', 'middleware' => 'check.role:admin|empleado|cliente'], function (): void {
+    Route::group(['prefix' => 'citas', 'controller' => CitaController::class], function(): void{
+        Route::get('listado', 'index')->name('citas.index')->middleware('check.role:admin|empleado|cliente');
+        Route::post('crear', 'store')->name('citas.store')->middleware('check.role:admin|empleado|cliente');
+        Route::patch('editar/{id}', 'update')->name('citas.update')->middleware('check.role:admin|empleado');
+        Route::delete('eliminar/{id}', 'destroy')->name('citas.destroy')->middleware('check.role:admin|empleado');
+    })->name('citas');
+})->name('agendas');

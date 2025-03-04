@@ -29,63 +29,68 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware('auth', 'verified', 'check.role:admin|empleado|cliente')->group(function () {
+Route::middleware('auth', 'verified')->group(function () {
     Route::prefix('dashboard')->group(function (): void {
-        Route::prefix('clientes')->group(function (): void {
-            Route::get('crear', function () {
-                return Inertia::render('Dashboard/Clientes/CrearCliente');
-            })->name('dashboard.clientes.crear');
+        Route::middleware('check.role:admin|empleado|cliente')->group(function () {
+            Route::prefix('clientes')->group(function (): void {
+                Route::get('crear', function () {
+                    return Inertia::render('Dashboard/Clientes/CrearCliente');
+                })->name('dashboard.clientes.crear');
+            });
+            Route::prefix('citas')->group(function (): void {
+                Route::get('', function () {
+                    return Inertia::render('Dashboard/Agendas/GestionarCitas');
+                })->name('dashboard.citas');
+                Route::get('crear', function () {
+                    return Inertia::render('Dashboard/Agendas/Cita');
+                })->name('dashboard.citas.crear');
+
+            });
         });
-    });
-});
 
-Route::middleware('auth', 'verified', 'check.role:admin|empleado')->group(function () {
-    Route::prefix('dashboard')->group(function (): void {
-        Route::prefix('clientes')->group(function (): void {
-            Route::get('', function () {
-                return Inertia::render('Dashboard/Clientes/GestionarClientes');
-            })->name('dashboard.clientes');
-            Route::get('{id}', function () {
-                return Inertia::render('Dashboard/Clientes/EditarCliente');
-            })->name('dashboard.clientes.editar');
-            Route::get('{id}/eliminar', function () {
-                return Inertia::render('Dashboard/Clientes/EliminarCliente');
-            })->name('dashboard.clientes.eliminar');
+        Route::middleware('check.role:admin|empleado')->group(function () {
+            Route::prefix('clientes')->group(function (): void {
+                Route::get('', function () {
+                    return Inertia::render('Dashboard/Clientes/GestionarClientes');
+                })->name('dashboard.clientes');
+                Route::get('{id}', function () {
+                    return Inertia::render('Dashboard/Clientes/EditarCliente');
+                })->name('dashboard.clientes.editar');
+                Route::get('{id}/eliminar', function () {
+                    return Inertia::render('Dashboard/Clientes/EliminarCliente');
+                })->name('dashboard.clientes.eliminar');
+            });
         });
-    });
-});
 
-
-
-Route::middleware('auth', 'verified', 'check.role:admin')->group(function () {
-    Route::prefix('dashboard')->group(function (): void {
-        Route::prefix('empleados')->group(function (): void {
-            Route::get('', function () {
-                return Inertia::render('Dashboard/Empleados/GestionarEmpleados');
-            })->name('dashboard.empleados');
-            Route::get('crear', function () {
-                return Inertia::render('Dashboard/Empleados/CrearEmpleado');
-            })->name('dashboard.empleados.crear');
-            Route::get('{id}', function () {
-                return Inertia::render('Dashboard/Empleados/EditarEmpleado');
-            })->name('dashboard.empleados.editar');
-            Route::get('{id}/eliminar', function () {
-                return Inertia::render('Dashboard/Empleados/EliminarEmpleado');
-            })->name('dashboard.empleados.eliminar');
-        });
-        Route::prefix('servicios')->group(function (): void {
-            Route::get('', function () {
-                return Inertia::render('Dashboard/Servicios/GestionarServicios');
-            })->name('dashboard.servicios');
-            Route::get('crear', function () {
-                return Inertia::render('Dashboard/Servicios/CrearServicio');
-            })->name('dashboard.servicios.crear');
-            Route::get('{id}', function () {
-                return Inertia::render('Dashboard/Servicios/EditarServicio');
-            })->name('dashboard.servicios.editar');
-            Route::get('{id}/eliminar', function () {
-                return Inertia::render('Dashboard/Servicios/EliminarServicio');
-            })->name('dashboard.servicios.eliminar');
+        Route::middleware('check.role:admin')->group(function () {
+            Route::prefix('empleados')->group(function (): void {
+                Route::get('', function () {
+                    return Inertia::render('Dashboard/Empleados/GestionarEmpleados');
+                })->name('dashboard.empleados');
+                Route::get('crear', function () {
+                    return Inertia::render('Dashboard/Empleados/CrearEmpleado');
+                })->name('dashboard.empleados.crear');
+                Route::get('{id}', function () {
+                    return Inertia::render('Dashboard/Empleados/EditarEmpleado');
+                })->name('dashboard.empleados.editar');
+                Route::get('{id}/eliminar', function () {
+                    return Inertia::render('Dashboard/Empleados/EliminarEmpleado');
+                })->name('dashboard.empleados.eliminar');
+            });
+            Route::prefix('servicios')->group(function (): void {
+                Route::get('', function () {
+                    return Inertia::render('Dashboard/Servicios/GestionarServicios');
+                })->name('dashboard.servicios');
+                Route::get('crear', function () {
+                    return Inertia::render('Dashboard/Servicios/CrearServicio');
+                })->name('dashboard.servicios.crear');
+                Route::get('{id}', function () {
+                    return Inertia::render('Dashboard/Servicios/EditarServicio');
+                })->name('dashboard.servicios.editar');
+                Route::get('{id}/eliminar', function () {
+                    return Inertia::render('Dashboard/Servicios/EliminarServicio');
+                })->name('dashboard.servicios.eliminar');
+            });
         });
     });
 });

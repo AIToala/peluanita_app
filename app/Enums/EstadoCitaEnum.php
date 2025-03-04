@@ -4,10 +4,9 @@ namespace App\Enums;
 
 enum EstadoCitaEnum: string
 {
-    case BORRADOR = "borrador";
-    case ACEPTADO = "aceptado";
-    case CANCELADO = "cancelado";
+    case ACEPTADA = "aceptada";
+    case CANCELADA = "cancelada";
     case PENDIENTE = "pendiente";
-    case RECHAZADO = "rechazado";
-    case FINALIZADO = "finalizado";
+    case RECHAZADA = "rechazada";
+    case FINALIZADA = "finalizada";
 }

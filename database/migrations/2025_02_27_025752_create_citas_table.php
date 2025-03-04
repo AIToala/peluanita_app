@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('id_cliente');
             $table->dateTime('fecha_hora_cita');
-            $table->enum('estado', ['ACEPTADO', 'CANCELADO', 'PENDIENTE', 'BORRADOR', 'RECHAZADO', 'FINALIZADO'])->default('PENDIENTE');
+            $table->enum('estado', ['ACEPTADA', 'CANCELADA', 'PENDIENTE', 'RECHAZADA', 'FINALIZADA'])->default('PENDIENTE');
             $table->timestamps();
         });
     }

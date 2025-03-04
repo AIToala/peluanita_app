@@ -38,7 +38,7 @@ class ClienteController extends AuthDataController
         }
         try {
             $result = Cliente::
-                when(isset($request['with_usuario']), fn ($q) => $q->with('usuario'))
+                when(isset($request['with_usuario']), fn ($q) => $q->with('usuario:id,username,email'))
                 ->when(isset($request['id']), fn ($q) => $q->where('id', $request['id']))
                 ->when(isset($request['id_usuario']), fn ($q) => $q->where('id', $request['id_usuario']))
                 ->when(isset($request['nombre']), fn ($q) => $q->where('nombre', 'like', '%' . $request['nombre'] . '%'))
@@ -54,11 +54,6 @@ class ClienteController extends AuthDataController
                     fn ($q) => $q->get(),
                 );
             $result->makeHidden(['created_at', 'updated_at', 'email_verified_at', 'password']);
-            if ($request->boolean('with_usuario')) {
-                $result->each(function ($cliente) {
-                    $cliente->usuario->makeHidden(['created_at', 'updated_at', 'email_verified_at', 'email','name', 'role', 'username']);
-                });
-            }
             return response()->json($result, 200);
         } catch (\Throwable $th) {
             LogUtils::error($th);
@@ -89,10 +84,8 @@ class ClienteController extends AuthDataController
         }
         try {
             \DB::beginTransaction();
-            if (in_array($request->role, ['admin', 'empleado'])) {
-                if (!Auth::user() || !Auth::user()->hasRole(['admin', 'empleado'])) {
+            if (!Auth::user() || !Auth::user()->hasRole(['admin', 'empleado'])) {
                     throw new \Exception('No tienes permisos para crear este usuario');
-                }
             }
             $userWithSameEmail = User::where('email', $request->email)->first();
             if ($userWithSameEmail) {
@@ -149,6 +142,9 @@ class ClienteController extends AuthDataController
         \Log::info($request->all());
         try {
             \DB::beginTransaction();
+            if (!Auth::user() || !Auth::user()->hasRole(['admin', 'empleado'])) {
+                throw new \Exception('No tienes permisos para crear este usuario');
+            }
             $cliente = Cliente::find($request->id);
             if (!$cliente) {
                 throw new \Exception('Cliente no encontrado');
@@ -193,6 +189,9 @@ class ClienteController extends AuthDataController
     {
         try {
             \DB::beginTransaction();
+            if (!Auth::user() || !Auth::user()->hasRole(['admin', 'empleado'])) {
+                throw new \Exception('No tienes permisos para crear este usuario');
+            }
             $cliente = Cliente::find($id_cliente);
             if (!$cliente) {
                 throw new \Exception('Cliente no encontrado');
@@ -223,6 +222,9 @@ class ClienteController extends AuthDataController
     {
         try {
             \DB::beginTransaction();
+            if (!Auth::user() || !Auth::user()->hasRole(['admin', 'empleado'])) {
+                throw new \Exception('No tienes permisos para crear este usuario');
+            }
             $cliente = Cliente::find($id_cliente);
             if (!$cliente) {
                 throw new \Exception('Cliente no encontrado');
