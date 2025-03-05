@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+const baseURL =
+    import.meta.env.MODE === 'development'
+        ? 'http://localhost:8000'
+        : import.meta.env.VITE_APP_URL;
+
 const axiosIns = axios.create({
-    baseURL: `http://localhost:8000`,
+    baseURL: baseURL,
     withCredentials: true,
     xsrfCookieName: 'XSRF-TOKEN',
     xsrfHeaderName: 'X-XSRF-TOKEN',
