@@ -1,8 +1,7 @@
 import { createInertiaApp } from '@inertiajs/vue3';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createPinia } from 'pinia';
 import 'sweetalert2/dist/sweetalert2.min.css';
-import { createApp, DefineComponent, h } from 'vue';
+import { createApp, h } from 'vue';
 import { createI18n } from 'vue-i18n';
 import VueSweetalert2 from 'vue-sweetalert2';
 import { ZiggyVue } from 'ziggy-js';
@@ -30,11 +29,11 @@ const pinia = createPinia();
 
 createInertiaApp({
     title: (title) => `${title}`,
-    resolve: (name) =>
-        resolvePageComponent(
-            `./Pages/${name}.vue`,
-            import.meta.glob<DefineComponent>('./Pages/**/*.vue'),
-        ),
+    resolve: async (name) => {
+        const pages = import.meta.glob('./Pages/**/*.vue');
+        const page = await pages[`./Pages/${name}.vue`]();
+        return (page as { default: any }).default;
+    },
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)

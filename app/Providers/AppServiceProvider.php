@@ -40,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         \Vite::macro('logoContent', fn (string $asset) => file_get_contents($this->asset("resources/js/assets/images/logo/{$asset}"), false, stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]])));
         if (env('APP_PROD') == 'production') {
             \Vite::useBuildDirectory('dist');
+            \URL::forceScheme('https');
         }
         Validator::extend('booleable', [Boolean::class, 'legacyValidation'], __('validation.boolean'));
     }
