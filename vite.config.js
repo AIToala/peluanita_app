@@ -19,6 +19,15 @@ export default defineConfig({
             },
         }),
     ],
+    build: {
+        outDir: 'public',
+        rollupOptions: {
+            input: {
+                app: path.resolve(__dirname, 'resources/js/app.ts'),
+                ssr: path.resolve(__dirname, 'resources/js/ssr.ts'),
+            },
+        },
+    },
     resolve: {
         alias: {
             '@axios': path.resolve(__dirname, 'resources/js/lib/axios'),
