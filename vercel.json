@@ -38,6 +38,8 @@
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
-        "QUEUE_CONNECTION": "sync"
+        "QUEUE_CONNECTION": "sync",
+        "VITE_APP_URL": "https://peluanita.vercel.app",
+        "VITE_API_URL": "https://peluanita.vercel.app"
     }
 }
