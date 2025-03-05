@@ -23,7 +23,6 @@ export default defineConfig({
     resolve: {
         alias: {
             '@axios': path.resolve(__dirname, 'resources/js/lib/axios'),
-            '@': path.resolve(__dirname, '/resources/js'),
         },
     },
 });
