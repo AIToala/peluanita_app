@@ -22,10 +22,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): Response
     {
+        $protocol = app()->environment('production') ? 'https' : 'http';
         return Inertia::render('Auth/Login', [
-            'canResetPassword' => Route::has('password.request'),
+            'canResetPassword' => false,
             'status' => session('status'),
-        ]);
+            'protocol' => $protocol,
+        ])->withHeaders(['X-Inertia' => 'true']);;
     }
 
     public function store(LoginRequest $request): RedirectResponse

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Logo from '@/Components/Logo.vue';
 import { Button } from '@/components/ui/button';
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { ChevronRight } from 'lucide-vue-next';
 
 defineProps<{
@@ -11,7 +11,6 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="PeluAnita"></Head>
     <div
         class="flex min-h-screen flex-col bg-gray-50 text-black/50 dark:bg-gray-900 dark:text-neutral-50/50"
     >

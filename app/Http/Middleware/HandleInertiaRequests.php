@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Tighten\Ziggy\Ziggy;
+use Closure;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -46,5 +47,25 @@ class HandleInertiaRequests extends Middleware
                 'location' => $request->url(),
             ],
         ]);
+    }
+
+    public function handle(Request $request, Closure $next)
+    {   
+        // Debugging: Log the request and response
+        \Log::info('Inertia Middleware: Request received', [
+            'url' => $request->url(),
+            'headers' => $request->headers->all(),
+        ]);
+
+        $response = $next($request);
+        $response->headers->set('X-Inertia', true);
+        $response->headers->set('Content-Type', 'text/html');
+
+        \Log::info('Inertia Middleware: Response generated', [
+            'status' => $response->status(),
+            'headers' => $response->headers->all(),
+        ]);
+
+        return $response;
     }
 }

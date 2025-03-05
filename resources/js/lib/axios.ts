@@ -12,8 +12,13 @@ const axiosIns = axios.create({
     xsrfHeaderName: 'X-XSRF-TOKEN',
     headers: {
         Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        common: {
+            'X-CSRF-TOKEN': document.head
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute('content'),
+        },
     },
-    withXSRFToken: true,
 });
 
 axiosIns.interceptors.request.use((config) => {
