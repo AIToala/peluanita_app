@@ -3,6 +3,10 @@ import laravel from 'laravel-vite-plugin';
 import path from 'node:path';
 import { defineConfig } from 'vite';
 
+function isExternal(id) {
+    return id.startsWith('~') && !path.isAbsolute(id);
+}
+
 export default defineConfig({
     base: '/',
     plugins: [
@@ -10,6 +14,7 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
             ssr: 'resources/js/ssr.ts',
             refresh: true,
+            buildDirectory: 'dist',
         }),
         vue({
             template: {
@@ -23,6 +28,22 @@ export default defineConfig({
     resolve: {
         alias: {
             '@axios': path.resolve(__dirname, 'resources/js/lib/axios'),
+        },
+    },
+    build: {
+        outDir: 'public/dist',
+        sourcemap: true,
+        emptyOutDir: false,
+        rollupOptions: {
+            external: isExternal,
+            output: {
+                assetFileNames: 'assets/[name][extname]',
+                manualChunks(id) {
+                    if (isExternal(id)) {
+                        return 'vendor';
+                    }
+                },
+            },
         },
     },
 });
