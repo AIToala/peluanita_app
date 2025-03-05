@@ -15,7 +15,15 @@
 
         <!-- Scripts -->
         @routes
+        @production
+            @php
+                $manifest = json_decode(file_get_contents(public_path('dist/manifest.json')));    
+            @endphp
+            <script type="module" src="/dist/{$manifest['resources/js/app.ts']['file']}"></script>
+            <link rel="stylesheet" href="/dist/{$manifest['resources/js/app.ts']['css'][0]}"/>
+        @else
         @vite(['resources/js/app.ts', "resources/js/Pages/{$page['component']}.vue"])
+        @endproduction
         @inertiaHead
     </head>
     <body class="font-inter antialiased">
