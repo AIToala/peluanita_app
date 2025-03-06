@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const baseURL =
-    import.meta.env.MODE === 'development'
+    import.meta.env.MODE === 'development' ||
+    import.meta.env.VITE_APP_ENV === 'local'
         ? 'http://localhost:8000'
         : import.meta.env.VITE_APP_URL;
 
@@ -11,13 +12,10 @@ const axiosIns = axios.create({
     xsrfCookieName: 'XSRF-TOKEN',
     xsrfHeaderName: 'X-XSRF-TOKEN',
     headers: {
+        'X-CSRF-TOKEN': document.head
+            .querySelector('meta[name="csrf-token"]')
+            ?.getAttribute('content'),
         Accept: 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        common: {
-            'X-CSRF-TOKEN': document.head
-                .querySelector('meta[name="csrf-token"]')
-                ?.getAttribute('content'),
-        },
     },
 });
 
@@ -25,6 +23,9 @@ axiosIns.interceptors.request.use((config) => {
     const token = localStorage.getItem('api_token'); // Retrieve the token from localStorage
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    if (config.headers['X-Inertia']) {
+        config.headers['X-Inertia'] = 'true';
     }
     return config;
 });

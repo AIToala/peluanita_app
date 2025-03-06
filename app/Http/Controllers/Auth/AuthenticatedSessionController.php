@@ -22,16 +22,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): Response
     {
-        $protocol = app()->environment('production') ? 'https' : 'http';
+        \Log::info(session('status'));
         return Inertia::render('Auth/Login', [
-            'canResetPassword' => false,
+            'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
-            'protocol' => $protocol,
-        ])->withHeaders(['X-Inertia' => 'true']);;
+        ]);
     }
 
     public function store(LoginRequest $request): RedirectResponse
     {
+
         $request->authenticate();
 
         $user = User::where('email', $request->email)->first();
@@ -48,9 +48,11 @@ class AuthenticatedSessionController extends Controller
         $agent = new \Jenssegers\Agent\Agent();
         $roles = $user->roles->pluck('name');
         $permissions = $user->getAllPermissions()->pluck('name')->toArray();
-        $accessToken = $user->createToken('api-token')->plainTextToken;
+        $accessToken = $user->createToken('api_token')->plainTextToken;
 
         session(['api_token' => $accessToken]);
+        \Log::info(session('api_token'));
+        \Log::info(session('status'));
         return redirect()->intended(route('dashboard', absolute: false));
         
     }
